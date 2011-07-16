@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    トグルボタンの見た目を、デフォルトのボタンスタイルにするための設定。
+    start/stop のトグルボタンの見た目が気に入らなかったので。
+ -->
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="false"
+        android:drawable="@android:drawable/btn_default" />
+    <item android:state_checked="true"
+        android:drawable="@android:drawable/btn_default" />
+</selector>

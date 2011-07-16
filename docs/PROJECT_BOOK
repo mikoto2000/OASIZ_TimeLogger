@@ -1,3 +1,29 @@
+================
+OASIZ_TimeLogger
+
+The MIT License
+
+Copyright (c) 2011 mikoto2000<mikoto2000@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+================
+
 OASIZ_TimeLogger
 
 ■ これは何？
@@ -9,5 +35,10 @@ OASIZ_TimeLogger
 思いがけなく割り込んで入ってくる作業のために、「とりあえず時間記録機能」を搭載したい。
 無名のまま作業時間を記録し、あとでその作業名を入力できるようにしたい。
 
+■変更履歴
+2011/07/16 作業時間計測の仕組みを作成
+
 ■ TODO
-・作り始める
+・計測した作業時間をファイルか何かに記録出来るようにする。
+・記録した作業時間を名前で管理出来るようにする。
+・記録した時間を後から見直せる仕組みを作る。

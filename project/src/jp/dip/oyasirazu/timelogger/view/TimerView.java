@@ -1,5 +1,5 @@
 /**
- * OASIZ_TimeLogger.java
+ * TimerVIew.java
  * 
  * The MIT License
  * 
@@ -24,43 +24,47 @@
  * THE SOFTWARE.
  */
 
-package jp.dip.oyasirazu.timelogger;
+package jp.dip.oyasirazu.timelogger.view;
 
-import jp.dip.oyasirazu.timelogger.view.TimerView;
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ToggleButton;
+import java.util.Date;
 
-/**
- * 時間を記録するアクティビティ
- * @author mikoto
- */
-public class OASIZ_TimeLogger extends Activity {
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.DigitalClock;
+
+public class TimerView extends DigitalClock {
     
-    private TimerView mTimerView;
+    private long mStartTime;
     
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.work_record);
-        
-        mTimerView = (TimerView)findViewById(R.id.timer_view);
+    /**
+     * コンストラクタ
+     * @param context
+     */
+    public TimerView(Context context) {
+        super(context);
     }
     
     /**
-     * 作業時間の記録開始・終了を行います。
-     * @param view 記録開始・終了トグルボタン
+     * コンストラクタ
+     * @param context
+     * @param attrs
      */
-    public void onStartStop(View view) {
-        ToggleButton button = (ToggleButton)view;
-        
-        if(button.isChecked()) {
-            mTimerView.start();
-        } else {
-            long time = mTimerView.stop();
-            Log.d("OASIZ_TimeLogger", "work time is " + time + "msec");
-        }
+    public TimerView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    
+    /**
+     * 時間の記録を開始します。
+     */
+    public void start() {
+        mStartTime = System.currentTimeMillis();
+    }
+    
+    /**
+     * 時間の記録を終了します。
+     * @return start してからの時間(ms)
+     */
+    public long stop() {
+        return System.currentTimeMillis() - mStartTime;
     }
 }

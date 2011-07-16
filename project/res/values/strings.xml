@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, OASIZ_TimeLogger!</string>
     <string name="app_name">OASIZ_TimeLogger</string>
+    <string name="start_record">Start Rec</string>
+    <string name="stop_record">Stop Rec</string>
+    <string name="interrupt">Interrupt</string>
+    <string name="detail">Detail</string>
 </resources>

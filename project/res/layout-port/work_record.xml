@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <jp.dip.oyasirazu.timelogger.view.TimerView
+    android:layout_width="fill_parent" 
+    android:textSize="80sp"
+    android:layout_height="wrap_content"
+    android:id="@+id/timer_view"/>
+    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content">
+        <ToggleButton
+            android:onClick="onStartStop"
+            android:checked="false"
+            android:textOff="@string/start_record"
+            android:textOn="@string/stop_record"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/start_stop_button">
+        </ToggleButton>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/interrupt"></Button>
+        <Button android:layout_width="wrap_content" android:text="@string/detail" android:layout_height="wrap_content"></Button>
+    </LinearLayout>
+</LinearLayout>

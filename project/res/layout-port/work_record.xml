@@ -4,6 +4,13 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="@string/work_name"
+        android:id="@+id/work_name" android:singleLine="true">
+        <requestFocus></requestFocus>
+    </EditText>
     <jp.dip.oyasirazu.timelogger.view.TimerView
     android:layout_width="fill_parent" 
     android:textSize="80sp"
@@ -22,4 +29,11 @@
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/interrupt"></Button>
         <Button android:layout_width="wrap_content" android:text="@string/detail" android:layout_height="wrap_content"></Button>
     </LinearLayout>
+    <ListView
+        android:id="@+id/log_view"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+    </ListView>
+    
 </LinearLayout>

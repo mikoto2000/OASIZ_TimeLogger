@@ -28,9 +28,12 @@ package jp.dip.oyasirazu.timelogger;
 
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ToggleButton;
 
 /**
@@ -39,14 +42,27 @@ import android.widget.ToggleButton;
  */
 public class OASIZ_TimeLogger extends Activity {
     
+    private Resources mResources;
     private TimerView mTimerView;
+    private EditText mWorkName;
+    private ListView mLogView;
+    private ArrayAdapter<String> mLogAdapter;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.work_record);
         
+        mResources = getResources();
+        
         mTimerView = (TimerView)findViewById(R.id.timer_view);
+        
+        mWorkName = (EditText)findViewById(R.id.work_name);
+        
+        mLogView = (ListView)findViewById(R.id.log_view);
+        mLogAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        mLogView.setAdapter(mLogAdapter);
+        
     }
     
     /**
@@ -59,8 +75,15 @@ public class OASIZ_TimeLogger extends Activity {
         if(button.isChecked()) {
             mTimerView.start();
         } else {
-            long time = mTimerView.stop();
-            Log.d("OASIZ_TimeLogger", "work time is " + time + "msec");
+            long spentTime = mTimerView.stop();
+            
+            String logFormatString = mResources.getString(R.string.log_string);
+            mLogAdapter.add(
+                    String.format(
+                            logFormatString,
+                            mWorkName.getText().toString(),
+                            spentTime
+              ));
         }
     }
 }

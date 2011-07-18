@@ -3,22 +3,45 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent" android:orientation="horizontal">
-    <jp.dip.oyasirazu.timelogger.view.TimerView
-    android:layout_width="wrap_content" 
-    android:layout_height="fill_parent" 
-    android:textSize="90sp"
-    android:id="@+id/timer_view"/>
-    <LinearLayout android:layout_width="wrap_content" android:id="@+id/linearLayout1" android:layout_height="match_parent" android:orientation="vertical">
-    <ToggleButton
-        android:onClick="onStartStop"
-        android:checked="false"
-        android:textOff="@string/start_record"
-        android:textOn="@string/stop_record"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:background="@drawable/start_stop_button">
-    </ToggleButton>
-    <Button android:text="@string/interrupt" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
-    <Button android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="match_parent"></Button>
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout2" 
+        android:orientation="vertical">
+        <EditText
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="@string/work_name"
+            android:id="@+id/work_name" android:singleLine="true">
+            <requestFocus></requestFocus>
+        </EditText>
+        <jp.dip.oyasirazu.timelogger.view.TimerView
+            android:layout_width="wrap_content" 
+            android:layout_height="fill_parent" 
+            android:textSize="90sp"
+            android:id="@+id/timer_view"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout2" 
+        android:orientation="vertical">
+        <ToggleButton
+            android:onClick="onStartStop"
+            android:checked="false"
+            android:textOff="@string/start_record"
+            android:textOn="@string/stop_record"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/start_stop_button">
+        </ToggleButton>
+        <Button android:text="@string/interrupt" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
+        <Button android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="match_parent"></Button>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/log_view"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
 </LinearLayout>

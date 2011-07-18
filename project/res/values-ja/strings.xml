@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">OASIZ_TimeLogger</string>
+    
+    <string name="work_name">作業名</string>
+    
     <string name="start_record">記録開始</string>
     <string name="stop_record">記録終了</string>
     <string name="interrupt">割り込み</string>
     <string name="detail">詳細</string>
+    
+    <string name="log_string">"%1$s : 作業時間は %2$d ミリ秒でした。"</string>
+    
 </resources>

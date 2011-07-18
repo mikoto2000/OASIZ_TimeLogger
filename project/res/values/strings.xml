@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">OASIZ_TimeLogger</string>
+    
+    <string name="work_name">Work Name</string>
+    
     <string name="start_record">Start Rec</string>
     <string name="stop_record">Stop Rec</string>
     <string name="interrupt">Interrupt</string>
     <string name="detail">Detail</string>
+    
+    <string name="log_string">"%1$s : spend time is %2$d msec"</string>
 </resources>

@@ -81,9 +81,9 @@ public class TimerView extends TextView {
             public void run() {
                 mCurrentTime = System.currentTimeMillis();
                 long spentTimeMsec = mCurrentTime - mStartTime;
+                long spentTimeSeconds = (spentTimeMsec / 1000) % 60; // 秒
+                long spentTimeMinutes = (spentTimeMsec / 60000) % 60; // 分
                 long spentTimeHours = spentTimeMsec / 360000; // 時間
-                long spentTimeMinutes = (spentTimeMsec % 360000) / 60000; // 分
-                long spentTimeSeconds = ((spentTimeMsec % 360000) % 60000) / 1000; // 秒
                 final String formattedTime = String.format(
                         mTimePattern,
                         spentTimeHours, // 時間

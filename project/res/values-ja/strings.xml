@@ -3,7 +3,7 @@
     <string name="app_name">OASIZ_TimeLogger</string>
     
     <string name="work_name">作業名</string>
-    <string name="time_pattern">"%1$02d:%1$02d:%3$02d"</string>
+    <string name="time_pattern">"%1$02d:%2$02d:%3$02d"</string>
     
     <string name="start_record">記録開始</string>
     <string name="stop_record">記録終了</string>

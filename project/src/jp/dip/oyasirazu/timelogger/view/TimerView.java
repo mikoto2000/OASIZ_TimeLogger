@@ -26,15 +26,24 @@
 
 package jp.dip.oyasirazu.timelogger.view;
 
-import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import jp.dip.oyasirazu.timelogger.R;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
-import android.widget.DigitalClock;
+import android.widget.TextView;
 
-public class TimerView extends DigitalClock {
+public class TimerView extends TextView {
     
+    private String mTimePattern;
+    private long mCurrentTime;
     private long mStartTime;
+    private Handler mHandler;
+    private Timer mTimer;
+    private TimerTask mTimeLogTask;
     
     /**
      * コンストラクタ
@@ -42,6 +51,7 @@ public class TimerView extends DigitalClock {
      */
     public TimerView(Context context) {
         super(context);
+        init(context);
     }
     
     /**
@@ -51,6 +61,14 @@ public class TimerView extends DigitalClock {
      */
     public TimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
+    }
+    
+    private void init(Context context) {
+        mTimePattern = context.getResources().getString(R.string.time_pattern);
+        
+        mHandler = new Handler();
+        mTimer = new Timer();
     }
     
     /**
@@ -58,6 +76,27 @@ public class TimerView extends DigitalClock {
      */
     public void start() {
         mStartTime = System.currentTimeMillis();
+        mTimeLogTask = new TimerTask() {
+            @Override
+            public void run() {
+                mCurrentTime = System.currentTimeMillis();
+                long spentTimeMsec = mCurrentTime - mStartTime;
+                long spentTimeHours = spentTimeMsec / 360000; // 時間
+                long spentTimeMinutes = (spentTimeMsec % 360000) / 60000; // 分
+                long spentTimeSeconds = ((spentTimeMsec % 360000) % 60000) / 1000; // 秒
+                final String formattedTime = String.format(
+                        mTimePattern,
+                        spentTimeHours, // 時間
+                        spentTimeMinutes, // 分
+                        spentTimeSeconds); // 秒
+                mHandler.post(new Runnable() {
+                    public void run() {
+                setText(formattedTime);
+                    }
+                });
+            }
+        };
+        mTimer.schedule(mTimeLogTask, 0, 1000); // 1 秒毎に更新
     }
     
     /**
@@ -65,6 +104,7 @@ public class TimerView extends DigitalClock {
      * @return start してからの時間(ms)
      */
     public long stop() {
+        mTimeLogTask.cancel();
         return System.currentTimeMillis() - mStartTime;
     }
 }

@@ -11,11 +11,17 @@
         android:id="@+id/work_name" android:singleLine="true">
         <requestFocus></requestFocus>
     </EditText>
+    <DigitalClock
+        android:textSize="80sp"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"/>
     <jp.dip.oyasirazu.timelogger.view.TimerView
-    android:layout_width="fill_parent" 
-    android:textSize="80sp"
-    android:layout_height="wrap_content"
-    android:id="@+id/timer_view"/>
+        android:text=""
+        android:id="@+id/timer_view"
+        android:textSize="80sp"
+        android:textColor="#FF0000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content">
         <ToggleButton
             android:onClick="onStartStop"

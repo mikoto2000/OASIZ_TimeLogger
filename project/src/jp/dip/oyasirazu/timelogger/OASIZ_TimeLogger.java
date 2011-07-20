@@ -26,10 +26,16 @@
 
 package jp.dip.oyasirazu.timelogger;
 
+import java.io.IOException;
+import java.util.Date;
+
+import jp.dip.oyasirazu.timelogger.util.LogDumper;
+import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -48,10 +54,15 @@ public class OASIZ_TimeLogger extends Activity {
     private ListView mLogView;
     private ArrayAdapter<String> mLogAdapter;
     
+    private LogDumper mLogger;
+    private long mStartTime;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.work_record);
+        
+        mLogger = new LogDumper(getFilesDir());
         
         mResources = getResources();
         
@@ -62,21 +73,22 @@ public class OASIZ_TimeLogger extends Activity {
         mLogView = (ListView)findViewById(R.id.log_view);
         mLogAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         mLogView.setAdapter(mLogAdapter);
-        
     }
     
     /**
      * 作業時間の記録開始・終了を行います。
      * @param view 記録開始・終了トグルボタン
+     * @throws IOException 
      */
-    public void onStartStop(View view) {
+    public void onStartStop(View view) throws IOException {
         ToggleButton button = (ToggleButton)view;
         
         if(button.isChecked()) {
-            mTimerView.start();
+            mStartTime = mTimerView.start();
         } else {
             long spentTime = mTimerView.stop();
             
+            // リストビューに書き出し
             String logFormatString = mResources.getString(R.string.log_string);
             mLogAdapter.add(
                     String.format(
@@ -84,6 +96,18 @@ public class OASIZ_TimeLogger extends Activity {
                             mWorkName.getText().toString(),
                             spentTime
               ));
+            
+            // ログファイルに書き出し
+            Date startDate = new Date(mStartTime);
+            String dumpMessage =
+                    String.format(
+                            "\"%s\", \"%s\", \"%s\"",
+                            mWorkName.getText().toString(),
+                            DateFormat.format("yyyy/MM/dd", startDate),
+                            TimeUtility.formatSpentTime(spentTime)
+              );
+            
+            mLogger.dump(startDate, dumpMessage);
         }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * TimerVIew.java
+ * TimerView.java
  * 
  * The MIT License
  * 
@@ -29,7 +29,7 @@ package jp.dip.oyasirazu.timelogger.view;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import jp.dip.oyasirazu.timelogger.R;
+import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 
 import android.content.Context;
 import android.os.Handler;
@@ -38,7 +38,6 @@ import android.widget.TextView;
 
 public class TimerView extends TextView {
     
-    private String mTimePattern;
     private long mCurrentTime;
     private long mStartTime;
     private Handler mHandler;
@@ -65,8 +64,6 @@ public class TimerView extends TextView {
     }
     
     private void init(Context context) {
-        mTimePattern = context.getResources().getString(R.string.time_pattern);
-        
         mHandler = new Handler();
         mTimer = new Timer();
     }
@@ -74,21 +71,14 @@ public class TimerView extends TextView {
     /**
      * 時間の記録を開始します。
      */
-    public void start() {
+    public long start() {
         mStartTime = System.currentTimeMillis();
         mTimeLogTask = new TimerTask() {
             @Override
             public void run() {
                 mCurrentTime = System.currentTimeMillis();
                 long spentTimeMsec = mCurrentTime - mStartTime;
-                long spentTimeSeconds = (spentTimeMsec / 1000) % 60; // 秒
-                long spentTimeMinutes = (spentTimeMsec / 60000) % 60; // 分
-                long spentTimeHours = spentTimeMsec / 360000; // 時間
-                final String formattedTime = String.format(
-                        mTimePattern,
-                        spentTimeHours, // 時間
-                        spentTimeMinutes, // 分
-                        spentTimeSeconds); // 秒
+                final String formattedTime = TimeUtility.formatSpentTime(spentTimeMsec);
                 mHandler.post(new Runnable() {
                     public void run() {
                 setText(formattedTime);
@@ -97,6 +87,7 @@ public class TimerView extends TextView {
             }
         };
         mTimer.schedule(mTimeLogTask, 0, 1000); // 1 秒毎に更新
+        return mStartTime;
     }
     
     /**

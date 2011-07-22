@@ -71,8 +71,9 @@ public class OASIZ_TimeLogger extends Activity {
         mWorkName = (EditText)findViewById(R.id.work_name);
         
         mLogView = (ListView)findViewById(R.id.log_view);
-        mLogAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        mLogAdapter = new ArrayAdapter<String>(this, R.layout.list_column);
         mLogView.setAdapter(mLogAdapter);
+        mLogView.setDividerHeight(0);
     }
     
     /**
@@ -90,12 +91,12 @@ public class OASIZ_TimeLogger extends Activity {
             
             // リストビューに書き出し
             String logFormatString = mResources.getString(R.string.log_string);
-            mLogAdapter.add(
+            mLogAdapter.insert(
                     String.format(
                             logFormatString,
                             mWorkName.getText().toString(),
                             spentTime
-              ));
+              ), 0);
             
             // ログファイルに書き出し
             Date startDate = new Date(mStartTime);

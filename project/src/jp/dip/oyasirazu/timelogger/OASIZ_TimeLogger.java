@@ -27,15 +27,16 @@
 package jp.dip.oyasirazu.timelogger;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jp.dip.oyasirazu.timelogger.util.LogDumper;
 import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -56,15 +57,20 @@ public class OASIZ_TimeLogger extends Activity {
     
     private LogDumper mLogger;
     private long mStartTime;
+    private SimpleDateFormat mDateFormat;
+    private String mLogFormatPattern;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.work_record);
         
+        mResources = getResources();
+        mLogFormatPattern = mResources.getString(R.string.log_dump_format);
+        mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        
         mLogger = new LogDumper(getFilesDir());
         
-        mResources = getResources();
         
         mTimerView = (TimerView)findViewById(R.id.timer_view);
         
@@ -90,7 +96,7 @@ public class OASIZ_TimeLogger extends Activity {
             long spentTime = mTimerView.stop();
             
             // リストビューに書き出し
-            String logFormatString = mResources.getString(R.string.log_string);
+            String logFormatString = mResources.getString(R.string.log_list_string);
             mLogAdapter.insert(
                     String.format(
                             logFormatString,
@@ -102,13 +108,22 @@ public class OASIZ_TimeLogger extends Activity {
             Date startDate = new Date(mStartTime);
             String dumpMessage =
                     String.format(
-                            "\"%s\", \"%s\", \"%s\"",
+                            mLogFormatPattern,
                             mWorkName.getText().toString(),
-                            DateFormat.format("yyyy/MM/dd", startDate),
+                            mDateFormat.format(startDate),
                             TimeUtility.formatSpentTime(spentTime)
               );
             
             mLogger.dump(startDate, dumpMessage);
         }
+    }
+    
+    /**
+     * 詳細リスト表示アクティビティに切り替えます。
+     * @param view
+     */
+    public void onDetail(View view) {
+        Intent intent = new Intent(this, DetailViewer.class);
+        startActivity(intent);
     }
 }

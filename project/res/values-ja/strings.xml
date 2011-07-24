@@ -13,7 +13,7 @@
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>
     <string name="log_string">"%1$s : 作業時間は %2$d ミリ秒でした。"</string>
     
-    <string name="no_log_data">データがありません。</string>
+    <string name="no_log_data">ログデータがありません。</string>
     <string name="next">次へ</string>
     <string name="prev">前へ</string>
     

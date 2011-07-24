@@ -46,6 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class DetailViewer extends ListActivity {
 
@@ -155,24 +156,32 @@ public class DetailViewer extends ListActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.detail_view_send:
-                // 表示中のファイルを取得
-                File currentFile = mLogFiles[mCurrentLogFileIndex];
-                
-                // ファイルの内容を取得
-                StringBuffer sb = new StringBuffer();
-                int itemNum = mLogAdapter.getCount();
-                for (int i = 0; i < itemNum; i++) {
-                    sb.append(mLogAdapter.getItem(i));
-                    sb.append("\n");
+                if (mLogFiles.length != 0) {
+                       // 表示中のファイルを取得
+                    File currentFile = mLogFiles[mCurrentLogFileIndex];
+                    
+                       // ファイルの内容を取得
+                    StringBuffer sb = new StringBuffer();
+                    int itemNum = mLogAdapter.getCount();
+                    for (int i = 0; i < itemNum; i++) {
+                        sb.append(mLogAdapter.getItem(i));
+                        sb.append("\n");
+                    }
+                    
+                    intent = new Intent(Intent.ACTION_SEND, null);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
+                    intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+                    startActivity(Intent.createChooser(
+                            intent,
+                            getResources().getString(R.string.choose_send_activity)));
+                } else {
+                    // ログファイルが無かった場合
+                    Toast.makeText(
+                            this,
+                            getResources().getString(R.string.no_log_data),
+                            Toast.LENGTH_LONG).show();
                 }
-                
-                intent = new Intent(Intent.ACTION_SEND, null);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
-                intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-                startActivity(Intent.createChooser(
-                        intent,
-                        getResources().getString(R.string.choose_send_activity)));
                 break;
             case R.id.detail_view_preferences:
                 // not implement

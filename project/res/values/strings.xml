@@ -13,7 +13,7 @@
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>
     <string name="log_list_string">"%1$s : spend time is %2$d msec"</string>
     
-    <string name="no_log_data">no data</string>
+    <string name="no_log_data">log data not found.</string>
     <string name="next">next</string>
     <string name="prev">prev</string>
     

@@ -18,8 +18,7 @@
         <DigitalClock
             android:layout_width="wrap_content" 
             android:layout_height="fill_parent" 
-            android:textSize="90sp"
-            android:id="@+id/timer_view"/>
+            android:textSize="90sp"/>
         <jp.dip.oyasirazu.timelogger.view.TimerView
             android:textSize="90sp"
             android:textColor="#FF0000"

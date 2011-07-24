@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent" android:orientation="horizontal">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" android:orientation="horizontal">
     <LinearLayout
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_width="wrap_content"
         android:id="@+id/linearLayout2" 
         android:orientation="vertical">
         <EditText
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:hint="@string/work_name"
             android:id="@+id/work_name" android:singleLine="true">
             <requestFocus></requestFocus>
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_width="wrap_content"
         android:id="@+id/linearLayout2" 
         android:orientation="vertical">
@@ -38,16 +38,16 @@
             android:textOff="@string/start_record"
             android:textOn="@string/stop_record"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:background="@drawable/start_stop_button">
         </ToggleButton>
-        <Button android:text="@string/interrupt" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
-        <Button android:onClick="onDetail" android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="match_parent"></Button>
+        <Button android:text="@string/interrupt" android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
+        <Button android:onClick="onDetail" android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="fill_parent"></Button>
     </LinearLayout>
     <ListView
         android:id="@+id/log_view"
         android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
     </ListView>
 </LinearLayout>

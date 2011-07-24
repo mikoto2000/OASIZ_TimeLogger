@@ -18,4 +18,9 @@
     <string name="prev">prev</string>
     
     <string name="log_input_error">log file read error.</string>
+    
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_send">Send</string>
+    
+    <string name="choose_send_activity">Choose send activity</string>
 </resources>

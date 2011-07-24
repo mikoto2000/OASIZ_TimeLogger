@@ -38,7 +38,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -125,11 +129,57 @@ public class DetailViewer extends ListActivity {
         }
     }
     
+    ////////////
+    // ボタン設定
+    
     public void onNext(View view) {
         
     }
     
     public void onPrev(View view) {
         
+    }
+    
+    //////////////
+    // メニュー設定
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.detail_viewre_menu, menu);
+      return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.detail_view_send:
+                // 表示中のファイルを取得
+                File currentFile = mLogFiles[mCurrentLogFileIndex];
+                
+                // ファイルの内容を取得
+                StringBuffer sb = new StringBuffer();
+                int itemNum = mLogAdapter.getCount();
+                for (int i = 0; i < itemNum; i++) {
+                    sb.append(mLogAdapter.getItem(i));
+                    sb.append("\n");
+                }
+                
+                intent = new Intent(Intent.ACTION_SEND, null);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
+                intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+                startActivity(Intent.createChooser(
+                        intent,
+                        getResources().getString(R.string.choose_send_activity)));
+                break;
+            case R.id.detail_view_preferences:
+                // not implement
+                break;
+            default:
+                throw new IllegalArgumentException("unknown menu id.");
+        }
+        return true;
     }
 }

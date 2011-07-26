@@ -65,7 +65,7 @@ public class DetailViewer extends ListActivity {
         setContentView(R.layout.detail_list);
         
         mLogSorter = new FileSorter();
-        mLogBaseDir = getFilesDir();
+        mLogBaseDir = new File(getFilesDir() + File.separator + OASIZ_TimeLogger.LOG_DIR);
         
         // ログファイルの一覧を取得
         mLogFiles = mLogBaseDir.listFiles();
@@ -183,7 +183,7 @@ public class DetailViewer extends ListActivity {
                             Toast.LENGTH_LONG).show();
                 }
                 break;
-            case R.id.detail_view_preferences:
+            case R.id.menu_wallpaper:
                 // not implement
                 break;
             default:

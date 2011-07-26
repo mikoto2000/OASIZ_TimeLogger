@@ -26,6 +26,9 @@
 
 package jp.dip.oyasirazu.timelogger;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,11 +39,20 @@ import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 /**
@@ -48,6 +60,13 @@ import android.widget.ToggleButton;
  * @author mikoto
  */
 public class OASIZ_TimeLogger extends Activity {
+    
+    static final String LOG_DIR = "logs";
+    static final String WALLPAPER_DIR = "wallpaper";
+    static final String WALLPAPER_NAME = "wallpaper.img";
+    static final int WALLPAPER_QUALITY = 100;
+    
+    private ViewGroup mRootLayout;
     
     private Resources mResources;
     private TimerView mTimerView;
@@ -65,12 +84,15 @@ public class OASIZ_TimeLogger extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.work_record);
         
+        mRootLayout = (ViewGroup)findViewById(R.id.root);
+        
         mResources = getResources();
         mLogFormatPattern = mResources.getString(R.string.log_dump_format);
         mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         
-        mLogger = new LogDumper(getFilesDir());
+        mLogger = new LogDumper(getFilesDir() + File.separator + LOG_DIR);
         
+        createWallpaperDir();
         
         mTimerView = (TimerView)findViewById(R.id.timer_view);
         
@@ -80,6 +102,8 @@ public class OASIZ_TimeLogger extends Activity {
         mLogAdapter = new ArrayAdapter<String>(this, R.layout.list_column);
         mLogView.setAdapter(mLogAdapter);
         mLogView.setDividerHeight(0);
+        
+        setWallpaper();
     }
     
     /**
@@ -125,5 +149,89 @@ public class OASIZ_TimeLogger extends Activity {
     public void onDetail(View view) {
         Intent intent = new Intent(this, DetailViewer.class);
         startActivity(intent);
+    }
+    
+
+    
+    //////////////
+    // メニュー設定
+    private static final int REQUEST_CODE_GET_CONTENT = 1;
+    private static final int REQUEST_CODE_CROP = 2;
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.work_record_menu, menu);
+      return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_wallpaper:
+                // ギャラリーから画像を選択し、バックグラウンドに設定する。
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQUEST_CODE_GET_CONTENT);
+                break;
+            default:
+                throw new IllegalArgumentException("unknown menu id.");
+        }
+        return true;
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_GET_CONTENT) {
+            // 画像の Uri を受け取る
+            Uri uri = data.getData();
+            
+            // クリッピングするためのインテントに Uri を渡してクリップしてもらう
+            Intent intent = new Intent("com.android.camera.action.CROP");
+            intent.setData(uri);
+            intent.putExtra("outputX", mRootLayout.getWidth());
+            intent.putExtra("outputY", mRootLayout.getHeight());
+            intent.putExtra("scale", true);
+            intent.putExtra("return-data", true);
+            startActivityForResult(intent, REQUEST_CODE_CROP);
+        }else if (requestCode == REQUEST_CODE_CROP) {
+            // クリップ済みの画像(Bitmap)を受け取る
+            Bitmap bitmap = data.getExtras().getParcelable("data");
+            try{
+                // 受け取った画像をアプリケーションディレクトリ内に記録する
+                File wallpaper = getWallpaperFile();
+                BufferedOutputStream bos = new BufferedOutputStream(
+                        new FileOutputStream(wallpaper));
+                bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);
+                bos.close();
+                setWallpaper();
+            }catch(Exception e){
+                Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
+                e.printStackTrace();
+            }
+        }
+     }
+    
+    private void createWallpaperDir() {
+        File wallpaperDir = new File(getFilesDir() + File.separator + WALLPAPER_DIR);
+        if (!wallpaperDir.exists()) {
+            wallpaperDir.mkdirs();
+        }
+    }
+    
+    private void setWallpaper() {
+        File wallpaper = getWallpaperFile();
+        BitmapDrawable drawable = new BitmapDrawable(wallpaper.getAbsolutePath());
+        mRootLayout.setBackgroundDrawable(drawable);
+    }
+    
+    private File getWallpaperFile() {
+        return new File(
+                getFilesDir().getAbsolutePath() +
+                File.separator +
+                WALLPAPER_DIR +
+                File.separator +
+                WALLPAPER_NAME);
     }
 }

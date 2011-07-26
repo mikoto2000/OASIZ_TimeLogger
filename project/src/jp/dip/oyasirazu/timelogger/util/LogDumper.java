@@ -54,13 +54,16 @@ public class LogDumper {
      * @param logFilesBaseDir
      */
     public LogDumper(File logFilesBaseDir) {
-        if (!logFilesBaseDir.exists()) {
-            throw new IllegalArgumentException("logFilesBaseDir not found.");
-        }
-        
-        if (!logFilesBaseDir.isDirectory()) {
+        if (logFilesBaseDir.exists()
+                && !logFilesBaseDir.isDirectory()) {
             throw new IllegalArgumentException("logFilesBaseDir is not directory.");
         }
+        
+        if (!logFilesBaseDir.exists()) {
+            logFilesBaseDir.mkdirs();
+        }
+        
+        
         mOutputDir = logFilesBaseDir;
     }
     

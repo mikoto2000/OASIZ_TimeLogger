@@ -39,6 +39,9 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,8 +51,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.LOG_DIR;
+import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;;
+
 public class DetailViewer extends ListActivity {
 
+    private Wallpaper mWallpaper;
+    
     File mLogBaseDir;
     File[] mLogFiles;
     
@@ -65,7 +73,7 @@ public class DetailViewer extends ListActivity {
         setContentView(R.layout.detail_list);
         
         mLogSorter = new FileSorter();
-        mLogBaseDir = new File(getFilesDir() + File.separator + OASIZ_TimeLogger.LOG_DIR);
+        mLogBaseDir = new File(getFilesDir() + File.separator + LOG_DIR);
         
         // ログファイルの一覧を取得
         mLogFiles = mLogBaseDir.listFiles();
@@ -90,6 +98,11 @@ public class DetailViewer extends ListActivity {
         }
         
         setListAdapter(mLogAdapter);
+        getListView().setCacheColorHint(Color.argb(0, 0, 0, 0));
+        
+        // 壁紙の設定
+        View rootView = (View)findViewById(R.id.root);
+        mWallpaper = new Wallpaper(rootView, getFilesDir());
     }
     
     /**
@@ -184,11 +197,29 @@ public class DetailViewer extends ListActivity {
                 }
                 break;
             case R.id.menu_wallpaper:
-                // not implement
+                // ギャラリーから画像を選択し、バックグラウンドに設定する。
+                Wallpaper.chooseWallpaper(this, REQUEST_CODE_GET_CONTENT);
                 break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
         }
         return true;
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_GET_CONTENT) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    // 受け取った Bitmap を壁紙に設定する
+                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+                    mWallpaper.setWallpaper(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
+                }
+            }
+        }
     }
 }

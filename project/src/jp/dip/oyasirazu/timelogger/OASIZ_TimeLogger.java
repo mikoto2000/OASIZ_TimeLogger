@@ -26,10 +26,7 @@
 
 package jp.dip.oyasirazu.timelogger;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,14 +39,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -63,15 +57,12 @@ import android.widget.ToggleButton;
 public class OASIZ_TimeLogger extends Activity {
     
     static final String LOG_DIR = "logs";
-    static final String WALLPAPER_DIR = "wallpaper";
-    static final String WALLPAPER_NAME = "wallpaper.img";
-    static final int WALLPAPER_QUALITY = 100;
     
     private static final String IS_RECORDING = "IS_RECORDING"; 
     private static final String WORK_NAME = "WORK_NAME"; 
     private static final String START_TIME = "START_TIME"; 
     
-    private ViewGroup mRootLayout;
+    private Wallpaper mWallpaper;
     
     private Resources mResources;
     private TimerView mTimerView;
@@ -91,15 +82,11 @@ public class OASIZ_TimeLogger extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.work_record);
         
-        mRootLayout = (ViewGroup)findViewById(R.id.root);
-        
         mResources = getResources();
         mLogFormatPattern = mResources.getString(R.string.log_dump_format);
         mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         
         mLogger = new LogDumper(getFilesDir() + File.separator + LOG_DIR);
-        
-        createWallpaperDir();
         
         mTimerView = (TimerView)findViewById(R.id.timer_view);
         
@@ -112,7 +99,9 @@ public class OASIZ_TimeLogger extends Activity {
         mLogView.setAdapter(mLogAdapter);
         mLogView.setDividerHeight(0);
         
-        setWallpaper();
+        // 壁紙の設定
+        View rootView = (View)findViewById(R.id.root);
+        mWallpaper = new Wallpaper(rootView, getFilesDir());
     }
     
     /**
@@ -177,7 +166,7 @@ public class OASIZ_TimeLogger extends Activity {
         }
     }
     
-    @Override  
+    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {  
         super.onRestoreInstanceState(savedInstanceState);  
         
@@ -198,8 +187,7 @@ public class OASIZ_TimeLogger extends Activity {
     
     //////////////
     // メニュー設定
-    private static final int REQUEST_CODE_GET_CONTENT = 1;
-    private static final int REQUEST_CODE_CROP = 2;
+    static final int REQUEST_CODE_GET_CONTENT = 1;
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -210,13 +198,10 @@ public class OASIZ_TimeLogger extends Activity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_wallpaper:
                 // ギャラリーから画像を選択し、バックグラウンドに設定する。
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_CODE_GET_CONTENT);
+                Wallpaper.chooseWallpaper(this, REQUEST_CODE_GET_CONTENT);
                 break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
@@ -224,54 +209,20 @@ public class OASIZ_TimeLogger extends Activity {
         return true;
     }
     
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GET_CONTENT) {
             if (resultCode == RESULT_OK) {
-                // 画像の Uri を受け取る
-                Bitmap bitmap;
-                
                 try {
-                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
-                    
-                    // 受け取った画像をアプリケーションディレクトリ内に記録する
-                    File wallpaper = getWallpaperFile();
-                    BufferedOutputStream bos = new BufferedOutputStream(
-                            new FileOutputStream(wallpaper));
-                    bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);
-                    bos.close();
-                    
-                    setWallpaper();
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                    Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
+                    // 受け取った Bitmap を壁紙に設定する
+                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+                    mWallpaper.setWallpaper(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
                 }
             }
         }
-     }
-    
-    private void createWallpaperDir() {
-        File wallpaperDir = new File(getFilesDir() + File.separator + WALLPAPER_DIR);
-        if (!wallpaperDir.exists()) {
-            wallpaperDir.mkdirs();
-        }
-    }
-    
-    private void setWallpaper() {
-        File wallpaper = getWallpaperFile();
-        BitmapDrawable drawable = new BitmapDrawable(wallpaper.getAbsolutePath());
-        mRootLayout.setBackgroundDrawable(drawable);
-    }
-    
-    private File getWallpaperFile() {
-        return new File(
-                getFilesDir().getAbsolutePath() +
-                File.separator +
-                WALLPAPER_DIR +
-                File.separator +
-                WALLPAPER_NAME);
     }
 }

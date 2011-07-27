@@ -28,6 +28,7 @@ package jp.dip.oyasirazu.timelogger;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -40,9 +41,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -226,31 +227,28 @@ public class OASIZ_TimeLogger extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GET_CONTENT) {
-            // 画像の Uri を受け取る
-            Uri uri = data.getData();
-            
-            // クリッピングするためのインテントに Uri を渡してクリップしてもらう
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setData(uri);
-            intent.putExtra("outputX", mRootLayout.getWidth());
-            intent.putExtra("outputY", mRootLayout.getHeight());
-            intent.putExtra("scale", true);
-            intent.putExtra("return-data", true);
-            startActivityForResult(intent, REQUEST_CODE_CROP);
-        } else if (requestCode == REQUEST_CODE_CROP) {
-            // クリップ済みの画像(Bitmap)を受け取る
-            Bitmap bitmap = data.getExtras().getParcelable("data");
-            try {
-                // 受け取った画像をアプリケーションディレクトリ内に記録する
-                File wallpaper = getWallpaperFile();
-                BufferedOutputStream bos = new BufferedOutputStream(
-                        new FileOutputStream(wallpaper));
-                bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);
-                bos.close();
-                setWallpaper();
-            } catch(Exception e) {
-                Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
-                e.printStackTrace();
+            if (resultCode == RESULT_OK) {
+                // 画像の Uri を受け取る
+                Bitmap bitmap;
+                
+                try {
+                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+                    
+                    // 受け取った画像をアプリケーションディレクトリ内に記録する
+                    File wallpaper = getWallpaperFile();
+                    BufferedOutputStream bos = new BufferedOutputStream(
+                            new FileOutputStream(wallpaper));
+                    bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);
+                    bos.close();
+                    
+                    setWallpaper();
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                    Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
+                }
             }
         }
      }

@@ -66,6 +66,10 @@ public class OASIZ_TimeLogger extends Activity {
     static final String WALLPAPER_NAME = "wallpaper.img";
     static final int WALLPAPER_QUALITY = 100;
     
+    private static final String IS_RECORDING = "IS_RECORDING"; 
+    private static final String WORK_NAME = "WORK_NAME"; 
+    private static final String START_TIME = "START_TIME"; 
+    
     private ViewGroup mRootLayout;
     
     private Resources mResources;
@@ -78,6 +82,8 @@ public class OASIZ_TimeLogger extends Activity {
     private long mStartTime;
     private SimpleDateFormat mDateFormat;
     private String mLogFormatPattern;
+    
+    private ToggleButton mStartStopButton;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +104,8 @@ public class OASIZ_TimeLogger extends Activity {
         
         mWorkName = (EditText)findViewById(R.id.work_name);
         
+        mStartStopButton = (ToggleButton)findViewById(R.id.start_stop_button);
+        
         mLogView = (ListView)findViewById(R.id.log_view);
         mLogAdapter = new ArrayAdapter<String>(this, R.layout.list_column);
         mLogView.setAdapter(mLogAdapter);
@@ -112,9 +120,7 @@ public class OASIZ_TimeLogger extends Activity {
      * @throws IOException 
      */
     public void onStartStop(View view) throws IOException {
-        ToggleButton button = (ToggleButton)view;
-        
-        if(button.isChecked()) {
+        if(mStartStopButton.isChecked()) {
             mStartTime = mTimerView.start();
         } else {
             long spentTime = mTimerView.stop();
@@ -151,7 +157,43 @@ public class OASIZ_TimeLogger extends Activity {
         startActivity(intent);
     }
     
-
+    ///////////////////////////////////////////////
+    // 回転したときやバックグラウンドに行ったときでも、
+    // 時間計測を続けられるように
+    // Bundle に作業名と開始時間を記録しておく。
+    @Override  
+    protected void onSaveInstanceState(Bundle outState) {  
+        super.onSaveInstanceState(outState);
+        boolean isRecording = mStartStopButton.isChecked();
+        outState.putBoolean(IS_RECORDING, isRecording);
+        
+        if (isRecording) {
+            String workName = mWorkName.getText().toString();
+            long startTime = mStartTime;
+            
+            outState.putString(WORK_NAME, workName);
+            outState.putLong(START_TIME, startTime);
+        }
+    }
+    
+    @Override  
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {  
+        super.onRestoreInstanceState(savedInstanceState);  
+        
+        boolean isRecording = savedInstanceState.getBoolean(IS_RECORDING);
+        
+        if (isRecording) {
+            // 引き継いだ startTime はそのままに、タイマーだけスタートする。
+            mWorkName.setText(savedInstanceState.getString(WORK_NAME));
+            mStartTime = savedInstanceState.getLong(START_TIME);
+            
+            mTimerView.start();
+            mTimerView.overrideStartTime(mStartTime);
+            mStartStopButton.setChecked(true);
+        } else {
+            mStartStopButton.setChecked(false);
+        }
+    }
     
     //////////////
     // メニュー設定
@@ -195,10 +237,10 @@ public class OASIZ_TimeLogger extends Activity {
             intent.putExtra("scale", true);
             intent.putExtra("return-data", true);
             startActivityForResult(intent, REQUEST_CODE_CROP);
-        }else if (requestCode == REQUEST_CODE_CROP) {
+        } else if (requestCode == REQUEST_CODE_CROP) {
             // クリップ済みの画像(Bitmap)を受け取る
             Bitmap bitmap = data.getExtras().getParcelable("data");
-            try{
+            try {
                 // 受け取った画像をアプリケーションディレクトリ内に記録する
                 File wallpaper = getWallpaperFile();
                 BufferedOutputStream bos = new BufferedOutputStream(
@@ -206,7 +248,7 @@ public class OASIZ_TimeLogger extends Activity {
                 bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);
                 bos.close();
                 setWallpaper();
-            }catch(Exception e){
+            } catch(Exception e) {
                 Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
                 e.printStackTrace();
             }

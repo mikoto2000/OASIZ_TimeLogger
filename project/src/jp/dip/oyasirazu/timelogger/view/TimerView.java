@@ -76,12 +76,9 @@ public class TimerView extends TextView {
         mTimeLogTask = new TimerTask() {
             @Override
             public void run() {
-                mCurrentTime = System.currentTimeMillis();
-                long spentTimeMsec = mCurrentTime - mStartTime;
-                final String formattedTime = TimeUtility.formatSpentTime(spentTimeMsec);
                 mHandler.post(new Runnable() {
                     public void run() {
-                setText(formattedTime);
+                        TimerView.this.displayTime();
                     }
                 });
             }
@@ -90,6 +87,13 @@ public class TimerView extends TextView {
         return mStartTime;
     }
     
+    private void displayTime() {
+        mCurrentTime = System.currentTimeMillis();
+        long spentTimeMsec = mCurrentTime - mStartTime;
+        final String formattedTime = TimeUtility.formatSpentTime(spentTimeMsec);
+        setText(formattedTime);
+    }
+
     /**
      * 時間の記録を終了します。
      * @return start してからの時間(ms)
@@ -97,5 +101,15 @@ public class TimerView extends TextView {
     public long stop() {
         mTimeLogTask.cancel();
         return System.currentTimeMillis() - mStartTime;
+    }
+    
+    /**
+     * 開始時間を上書きします。<br />
+     * start を読んでから実行してください。
+     * @param startTime 上書きする開始時間
+     */
+    public void overrideStartTime(long startTime) {
+        mStartTime = startTime;
+        displayTime();
     }
 }

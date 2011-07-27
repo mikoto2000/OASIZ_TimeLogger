@@ -50,7 +50,7 @@ public class Wallpaper {
     
     public Wallpaper(View rootLayout, File baseDir) {
         mRootLayout = rootLayout;
-        mWallpaperDir = baseDir;
+        mWallpaperDir = new File(baseDir + File.separator + WALLPAPER_DIR);
         mWallpaperFile = new File(
                 baseDir +
                 File.separator +

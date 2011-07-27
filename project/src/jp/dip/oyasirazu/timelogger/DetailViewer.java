@@ -96,6 +96,8 @@ public class DetailViewer extends ListActivity {
         }
         
         setListAdapter(mLogAdapter);
+        
+        // リストの要素の背景色を透明にする
         getListView().setCacheColorHint(Color.argb(0, 0, 0, 0));
         
         // 壁紙の設定

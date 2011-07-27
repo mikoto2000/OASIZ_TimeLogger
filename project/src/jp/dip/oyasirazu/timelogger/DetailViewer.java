@@ -48,7 +48,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.LOG_DIR;
@@ -61,7 +60,6 @@ public class DetailViewer extends ListActivity {
     private File mLogBaseDir;
     private File[] mLogFiles;
     
-    private ListView mListView;
     private ArrayAdapter<String> mLogAdapter;
     
     private int mCurrentLogFileIndex;

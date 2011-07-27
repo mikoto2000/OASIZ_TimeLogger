@@ -58,14 +58,14 @@ public class DetailViewer extends ListActivity {
 
     private Wallpaper mWallpaper;
     
-    File mLogBaseDir;
-    File[] mLogFiles;
+    private File mLogBaseDir;
+    private File[] mLogFiles;
     
-    ListView mListView;
-    ArrayAdapter<String> mLogAdapter;
+    private ListView mListView;
+    private ArrayAdapter<String> mLogAdapter;
     
-    int mCurrentLogFileIndex;
-    FileSorter mLogSorter;
+    private int mCurrentLogFileIndex;
+    private FileSorter mLogSorter;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

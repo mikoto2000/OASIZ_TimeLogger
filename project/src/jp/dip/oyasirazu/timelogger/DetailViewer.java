@@ -163,8 +163,8 @@ public class DetailViewer extends ListActivity {
     private void updateList() throws IllegalStateException, IOException {
             mLogAdapter.clear();
             List<String> logList = createLogList(mCurrentLogFileIndex);
-            for(int i = logList.size() - 1; i >= 0; i--) {
-                mLogAdapter.add(logList.get(i));
+            for(String log : logList) {
+                mLogAdapter.add(log);
             }
     }
     

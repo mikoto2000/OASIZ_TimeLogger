@@ -40,9 +40,10 @@ public class TimeUtility {
      * @return フォーマット文字列
      */
     public static String formatSpentTime(long spentTimeMsec) {
-        long spentTimeSeconds = (spentTimeMsec / 1000) % 60; // 秒
-        long spentTimeMinutes = (spentTimeMsec / 60000) % 60; // 分
-        long spentTimeHours = spentTimeMsec / 360000; // 時間
+        long tmp = (spentTimeMsec / 1000); // 秒
+        long spentTimeSeconds = tmp % 60; // 秒
+        long spentTimeMinutes = (tmp / 60) % 60; // 分
+        long spentTimeHours = (tmp / 60 / 60); // 時間
         final String formattedTime = String.format(
                 sTimePattern,
                 spentTimeHours, // 時間

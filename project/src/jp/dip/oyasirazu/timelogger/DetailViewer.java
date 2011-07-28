@@ -145,7 +145,6 @@ public class DetailViewer extends ListActivity {
     
     ////////////
     // ボタン設定
-    
     public void onNext(View view) {
         
     }
@@ -166,39 +165,13 @@ public class DetailViewer extends ListActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.detail_view_send:
-                if (mLogFiles.length != 0) {
-                       // 表示中のファイルを取得
-                    File currentFile = mLogFiles[mCurrentLogFileIndex];
-                    
-                       // ファイルの内容を取得
-                    StringBuffer sb = new StringBuffer();
-                    int itemNum = mLogAdapter.getCount();
-                    for (int i = 0; i < itemNum; i++) {
-                        sb.append(mLogAdapter.getItem(i));
-                        sb.append("\n");
-                    }
-                    
-                    intent = new Intent(Intent.ACTION_SEND, null);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
-                    intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-                    startActivity(Intent.createChooser(
-                            intent,
-                            getResources().getString(R.string.choose_send_activity)));
-                } else {
-                    // ログファイルが無かった場合
-                    Toast.makeText(
-                            this,
-                            getResources().getString(R.string.no_log_data),
-                            Toast.LENGTH_LONG).show();
-                }
+                sendLog();
                 break;
             case R.id.menu_wallpaper:
                 // ギャラリーから画像を選択し、バックグラウンドに設定する。
-                Wallpaper.chooseWallpaper(this, REQUEST_CODE_GET_CONTENT);
+                mWallpaper.openWallpaperDialog(this, REQUEST_CODE_GET_CONTENT);
                 break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
@@ -206,6 +179,34 @@ public class DetailViewer extends ListActivity {
         return true;
     }
     
+    private void sendLog() {
+        Intent intent;
+        if (mLogFiles.length != 0) {
+            // 表示中のファイルを取得
+            File currentFile = mLogFiles[mCurrentLogFileIndex];
+            
+            // ファイルの内容を取得
+            StringBuffer sb = new StringBuffer();
+            int itemNum = mLogAdapter.getCount();
+            for (int i = 0; i < itemNum; i++) {
+                sb.append(mLogAdapter.getItem(i));
+                sb.append("\n");
+            }
+            
+            intent = new Intent(Intent.ACTION_SEND, null);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
+            intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+            startActivity(Intent.createChooser(intent, getResources()
+                    .getString(R.string.choose_send_activity)));
+        } else {
+            // ログファイルが無かった場合
+            Toast.makeText(this,
+                    getResources().getString(R.string.no_log_data),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

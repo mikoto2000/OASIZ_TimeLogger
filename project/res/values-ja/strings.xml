@@ -20,7 +20,14 @@
     <string name="menu_wallpaper">壁紙</string>
     <string name="menu_send">送信</string>
     
+    <!-- メニューメッセージ -->
     <string name="choose_send_activity">送信するアクティビティを選択</string>
+    
+    <string name="wallpaper">壁紙</string>
+    <string-array name="dialog_wallpaper">
+        <item>壁紙をクリアする</item>
+        <item>ギャラリーから選ぶ</item>
+    </string-array>
     
     <!-- エラーメッセージ -->
     <string name="log_input_error">ログファイルの読み込みに失敗しました。</string>

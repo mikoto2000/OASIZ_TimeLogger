@@ -200,9 +200,9 @@ public class OASIZ_TimeLogger extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_wallpaper:
-                // ギャラリーから画像を選択し、バックグラウンドに設定する。
-                Wallpaper.chooseWallpaper(this, REQUEST_CODE_GET_CONTENT);
-                break;
+                // 壁紙設定ダイアログを開く
+                mWallpaper.openWallpaperDialog(this, REQUEST_CODE_GET_CONTENT);
+            break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
         }

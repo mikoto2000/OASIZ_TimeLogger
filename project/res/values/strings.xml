@@ -21,7 +21,14 @@
     <string name="menu_wallpaper">WallPaper</string>
     <string name="menu_send">Send</string>
     
+    <!-- menu message -->
     <string name="choose_send_activity">Choose send activity</string>
+    
+    <string name="wallpaper">Wallpaper</string>
+    <string-array name="dialog_wallpaper">
+        <item>Clear wallpaper</item>
+        <item>Choose from gallery</item>
+    </string-array>
     
     <!-- error messages -->
     <string name="no_log_data">log data not found.</string>

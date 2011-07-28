@@ -32,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -72,6 +74,11 @@ public class Wallpaper {
         }
     }
     
+    public void clearWallpaper() {
+        mWallpaperFile.delete();
+        mRootLayout.setBackgroundDrawable(null);
+    }
+    
     public static void chooseWallpaper(Activity activity, int requestCode) {
         // ギャラリーから画像を選択し、バックグラウンドに設定する。
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -88,5 +95,36 @@ public class Wallpaper {
         
         BitmapDrawable drawable = new BitmapDrawable(mWallpaperFile.getAbsolutePath());
         mRootLayout.setBackgroundDrawable(drawable);
+    }
+    
+    public void openWallpaperDialog(final Activity activity, final int requestCode) {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                activity);
+        
+        dialogBuilder.setTitle(R.string.wallpaper);
+        
+        // 表示項目とリスナの設定
+        final String[] dialogItems = activity.getResources()
+                .getStringArray(R.array.dialog_wallpaper);
+        
+        dialogBuilder.setItems(dialogItems,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                        case 0:
+                            // バックグラウンドイメージを削除する
+                            clearWallpaper();
+                            break;
+                        case 1:
+                            // ギャラリーから画像を選択し、バックグラウンドに設定する。
+                            Wallpaper.chooseWallpaper(activity,
+                                    requestCode);
+                            break;
+                        }
+                    }
+                });
+        
+        // ダイアログを表示
+        dialogBuilder.create().show();
     }
 }

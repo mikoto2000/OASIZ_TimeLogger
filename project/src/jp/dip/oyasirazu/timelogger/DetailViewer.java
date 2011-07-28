@@ -145,12 +145,27 @@ public class DetailViewer extends ListActivity {
     
     ////////////
     // ボタン設定
-    public void onNext(View view) {
-        
+    
+    public void onNext(View view) throws IllegalStateException, IOException {
+        if (mCurrentLogFileIndex < mLogFiles.length - 1) {
+            mCurrentLogFileIndex++;
+            updateList();
+        }
     }
     
-    public void onPrev(View view) {
-        
+    public void onPrev(View view) throws IllegalStateException, IOException {
+        if (mCurrentLogFileIndex > 0) {
+            mCurrentLogFileIndex--;
+            updateList();
+        }
+    }
+    
+    private void updateList() throws IllegalStateException, IOException {
+            mLogAdapter.clear();
+            List<String> logList = createLogList(mCurrentLogFileIndex);
+            for(int i = logList.size() - 1; i >= 0; i--) {
+                mLogAdapter.add(logList.get(i));
+            }
     }
     
     //////////////

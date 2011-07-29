@@ -39,14 +39,14 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -54,7 +54,7 @@ import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.LOG_DIR;
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;;
 
 public class DetailViewer extends ListActivity {
-
+    
     private Wallpaper mWallpaper;
     
     private File mLogBaseDir;
@@ -101,8 +101,13 @@ public class DetailViewer extends ListActivity {
         getListView().setCacheColorHint(Color.argb(0, 0, 0, 0));
         
         // 壁紙の設定
+        WindowManager windowmanager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = windowmanager.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        
         View rootView = (View)findViewById(R.id.root);
-        mWallpaper = new Wallpaper(rootView, getFilesDir());
+        mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
     }
     
     /**
@@ -229,8 +234,7 @@ public class DetailViewer extends ListActivity {
             if (resultCode == RESULT_OK) {
                 try {
                     // 受け取った Bitmap を壁紙に設定する
-                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
-                    mWallpaper.setWallpaper(bitmap);
+                    mWallpaper.setWallpaper(getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);

@@ -37,13 +37,13 @@ import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -100,8 +100,13 @@ public class OASIZ_TimeLogger extends Activity {
         mLogView.setDividerHeight(0);
         
         // 壁紙の設定
+        WindowManager windowmanager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = windowmanager.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        
         View rootView = (View)findViewById(R.id.root);
-        mWallpaper = new Wallpaper(rootView, getFilesDir());
+        mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
     }
     
     /**
@@ -216,8 +221,7 @@ public class OASIZ_TimeLogger extends Activity {
             if (resultCode == RESULT_OK) {
                 try {
                     // 受け取った Bitmap を壁紙に設定する
-                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
-                    mWallpaper.setWallpaper(bitmap);
+                    mWallpaper.setWallpaper(getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);

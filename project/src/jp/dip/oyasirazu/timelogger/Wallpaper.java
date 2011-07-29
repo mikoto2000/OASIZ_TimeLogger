@@ -30,14 +30,18 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.view.View;
 
 public class Wallpaper {
@@ -50,7 +54,15 @@ public class Wallpaper {
     private File mWallpaperFile;
     private View mRootLayout;
     
-    public Wallpaper(View rootLayout, File baseDir) {
+    private int mWallpaperWidth;
+    private int mWallpaperHeight;
+    
+    public Wallpaper(View rootLayout, File baseDir,
+            int wallpaperWidth, int wallpaperHeight) {
+        
+        mWallpaperWidth = wallpaperWidth;
+        mWallpaperHeight = wallpaperHeight;
+        
         mRootLayout = rootLayout;
         mWallpaperDir = new File(baseDir + File.separator + WALLPAPER_DIR);
         mWallpaperFile = new File(
@@ -86,8 +98,30 @@ public class Wallpaper {
         activity.startActivityForResult(intent, requestCode);
     }
     
-    public void setWallpaper(Bitmap bitmap) throws IOException {
-        // 受け取った画像をアプリケーションディレクトリ内に記録する
+    public void setWallpaper(ContentResolver contentResolver, Uri uri) throws IOException {
+        //////////////////////////////////////////////////////////////////////////////
+        // Uri から画像を取得し、リサイズしたのちアプリケーションディレクトリ内に記録する
+        
+        // 画像サイズの取得
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        InputStream in = contentResolver.openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
+        in.close();
+        
+        // スケールを計算
+        // 縦横で比率が違う場合、大きい方に合わせてスケールする
+        // (壁紙に描画したとき、引き延ばしが起こらないように)
+        int scaleX = options.outWidth / mWallpaperWidth;
+        int scaleY = options.outHeight / mWallpaperHeight;
+        int scale = Math.min(scaleX, scaleY);
+        
+         // 倍率指定で Uri から Bitmap を取得
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scale;
+        in = contentResolver.openInputStream(uri);
+        bitmap = BitmapFactory.decodeStream(in, null, options);
+        
         BufferedOutputStream bos = new BufferedOutputStream(
                 new FileOutputStream(mWallpaperFile));
         bitmap.compress(CompressFormat.PNG, WALLPAPER_QUALITY, bos);

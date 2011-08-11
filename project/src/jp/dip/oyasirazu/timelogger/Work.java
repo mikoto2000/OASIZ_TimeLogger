@@ -23,7 +23,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package jp.dip.oyasirazu.timelogger;
 
 import java.util.Date;
@@ -31,12 +30,12 @@ import java.util.Date;
 public class Work {
     private String mName;
     private Date mStartDate;
-    private Date mSpentDate;
+    private long mSpentTime;
     
-    public Work(String name, Date startDate, Date spentTime) {
+    public Work(String name, Date startDate, long spentTime) {
         this.mName = name;
         this.mStartDate = startDate;
-        this.mSpentDate = spentTime;
+        this.mSpentTime = spentTime;
     }
     
     public String getName() {
@@ -55,11 +54,11 @@ public class Work {
         this.mStartDate = startTime;
     }
     
-    public Date getSpentDate() {
-        return mSpentDate;
+    public long getSpentTime() {
+        return mSpentTime;
     }
     
-    public void setSpentTime(Date spentDate) {
-        this.mSpentDate = spentDate;
+    public void setSpentTime(long spentTime) {
+        this.mSpentTime = spentTime;
     }
 }

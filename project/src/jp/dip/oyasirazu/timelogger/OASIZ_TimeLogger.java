@@ -68,7 +68,7 @@ public class OASIZ_TimeLogger extends Activity {
     private TimerView mTimerView;
     private EditText mWorkName;
     private ListView mLogView;
-    private ArrayAdapter<String> mLogAdapter;
+    private ArrayAdapter<Work> mLogAdapter;
     
     private LogDumper mLogger;
     private long mStartTime;
@@ -95,7 +95,9 @@ public class OASIZ_TimeLogger extends Activity {
         mStartStopButton = (ToggleButton)findViewById(R.id.start_stop_button);
         
         mLogView = (ListView)findViewById(R.id.log_view);
-        mLogAdapter = new ArrayAdapter<String>(this, R.layout.list_column);
+        String logFormatString = mResources.getString(R.string.log_list_string);
+        mLogAdapter = new WorkListAdapter(this, R.layout.list_column, logFormatString);
+        
         mLogView.setAdapter(mLogAdapter);
         mLogView.setDividerHeight(0);
         
@@ -120,16 +122,16 @@ public class OASIZ_TimeLogger extends Activity {
         } else {
             long spentTime = mTimerView.stop();
             
+            Work work = new Work(
+                    mWorkName.getText().toString(),
+                    new Date(mStartTime),
+                    spentTime);
+            
             // リストビューに書き出し
-            String logFormatString = mResources.getString(R.string.log_list_string);
-            mLogAdapter.insert(
-                    String.format(
-                            logFormatString,
-                            mWorkName.getText().toString(),
-                            spentTime
-              ), 0);
+            mLogAdapter.insert(work, 0);
             
             // ログファイルに書き出し
+            // TODO: 第4引数を生のlong型で渡したい
             Date startDate = new Date(mStartTime);
             String dumpMessage =
                     String.format(

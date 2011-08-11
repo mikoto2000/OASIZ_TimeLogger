@@ -32,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jp.dip.oyasirazu.timelogger.util.LogDumper;
-import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.Intent;
@@ -71,7 +70,7 @@ public class OASIZ_TimeLogger extends Activity {
     private ArrayAdapter<Work> mLogAdapter;
     
     private LogDumper mLogger;
-    private long mStartTime;
+    private Date mStartDate;
     private SimpleDateFormat mDateFormat;
     private String mLogFormatPattern;
     
@@ -118,30 +117,28 @@ public class OASIZ_TimeLogger extends Activity {
      */
     public void onStartStop(View view) throws IOException {
         if(mStartStopButton.isChecked()) {
-            mStartTime = mTimerView.start();
+            mStartDate = mTimerView.start();
         } else {
-            long spentTime = mTimerView.stop();
+            Date endDate = mTimerView.stop();
             
             Work work = new Work(
                     mWorkName.getText().toString(),
-                    new Date(mStartTime),
-                    spentTime);
+                    mStartDate,
+                    endDate);
             
             // リストビューに書き出し
             mLogAdapter.insert(work, 0);
             
             // ログファイルに書き出し
-            // TODO: 第4引数を生のlong型で渡したい
-            Date startDate = new Date(mStartTime);
             String dumpMessage =
                     String.format(
                             mLogFormatPattern,
                             mWorkName.getText().toString(),
-                            mDateFormat.format(startDate),
-                            TimeUtility.formatSpentTime(spentTime)
+                            mDateFormat.format(mStartDate),
+                            mDateFormat.format(endDate)
               );
             
-            mLogger.dump(startDate, dumpMessage);
+            mLogger.dump(mStartDate, dumpMessage);
         }
     }
     
@@ -166,10 +163,9 @@ public class OASIZ_TimeLogger extends Activity {
         
         if (isRecording) {
             String workName = mWorkName.getText().toString();
-            long startTime = mStartTime;
             
             outState.putString(WORK_NAME, workName);
-            outState.putLong(START_TIME, startTime);
+            outState.putSerializable(START_TIME, mStartDate);
         }
     }
     
@@ -182,10 +178,10 @@ public class OASIZ_TimeLogger extends Activity {
         if (isRecording) {
             // 引き継いだ startTime はそのままに、タイマーだけスタートする。
             mWorkName.setText(savedInstanceState.getString(WORK_NAME));
-            mStartTime = savedInstanceState.getLong(START_TIME);
+            mStartDate = (Date)savedInstanceState.getSerializable(START_TIME);
             
             mTimerView.start();
-            mTimerView.overrideStartTime(mStartTime);
+            mTimerView.overrideStartDate(mStartDate);
             mStartStopButton.setChecked(true);
         } else {
             mStartStopButton.setChecked(false);

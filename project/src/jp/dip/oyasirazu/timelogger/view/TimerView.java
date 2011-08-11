@@ -26,6 +26,7 @@
 
 package jp.dip.oyasirazu.timelogger.view;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,7 +40,7 @@ import android.widget.TextView;
 public class TimerView extends TextView {
     
     private long mCurrentTime;
-    private long mStartTime;
+    private Date mStartDate;
     private Handler mHandler;
     private Timer mTimer;
     private TimerTask mTimeLogTask;
@@ -71,8 +72,8 @@ public class TimerView extends TextView {
     /**
      * 時間の記録を開始します。
      */
-    public long start() {
-        mStartTime = System.currentTimeMillis();
+    public Date start() {
+        mStartDate = new Date();
         mTimeLogTask = new TimerTask() {
             @Override
             public void run() {
@@ -84,32 +85,32 @@ public class TimerView extends TextView {
             }
         };
         mTimer.schedule(mTimeLogTask, 0, 1000); // 1 秒毎に更新
-        return mStartTime;
+        return mStartDate;
     }
     
     private void displayTime() {
         mCurrentTime = System.currentTimeMillis();
-        long spentTimeMsec = mCurrentTime - mStartTime;
+        long spentTimeMsec = mCurrentTime - mStartDate.getTime();
         final String formattedTime = TimeUtility.formatSpentTime(spentTimeMsec);
         setText(formattedTime);
     }
 
     /**
      * 時間の記録を終了します。
-     * @return start してからの時間(ms)
+     * @return 終了時刻
      */
-    public long stop() {
+    public Date stop() {
         mTimeLogTask.cancel();
-        return System.currentTimeMillis() - mStartTime;
+        return new Date();
     }
     
     /**
      * 開始時間を上書きします。<br />
      * start を読んでから実行してください。
-     * @param startTime 上書きする開始時間
+     * @param startDate 上書きする開始時刻
      */
-    public void overrideStartTime(long startTime) {
-        mStartTime = startTime;
+    public void overrideStartDate(Date startDate) {
+        mStartDate = startDate;
         displayTime();
     }
 }

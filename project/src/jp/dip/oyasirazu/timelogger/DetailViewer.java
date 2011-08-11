@@ -26,16 +26,12 @@
 
 package jp.dip.oyasirazu.timelogger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.text.SimpleDateFormat;
 import java.util.List;
+
+import jp.dip.oyasirazu.timelogger.util.DataStore;
+import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -50,52 +46,36 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.LOG_DIR;
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;;
 
 public class DetailViewer extends ListActivity {
     
     private Wallpaper mWallpaper;
     
-    private File mLogBaseDir;
-    private File[] mLogFiles;
+    private DataStore mDataStore;
+    private SimpleDateFormat mDateFormat;
     
-    private ArrayAdapter<String> mLogAdapter;
-    
-    private int mCurrentLogFileIndex;
-    private FileSorter mLogSorter;
+    private ArrayAdapter<Work> mLogAdapter;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_list);
         
-        mLogSorter = new FileSorter();
-        mLogBaseDir = new File(getFilesDir() + File.separator + LOG_DIR);
-        
-        // ログファイルの一覧を取得
-        mLogFiles = mLogBaseDir.listFiles();
-        Arrays.sort(mLogFiles, mLogSorter);
-        
-        // 最新のログを表示する指定
-        mCurrentLogFileIndex = mLogFiles.length - 1;
+        mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        mDataStore = new WorkLogDatabase(this, mDateFormat);
         
         // リストの設定
-        if (mLogFiles.length > 0) {
-            try {
-                mLogAdapter = new ArrayAdapter<String>(
-                        this,
-                        android.R.layout.simple_list_item_1,
-                        createLogList(mCurrentLogFileIndex));
-            } catch (IOException e) {
-                e.printStackTrace();
-                String errorMessage = getResources().getString(R.string.log_input_error);
-                mLogAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-                mLogAdapter.add(errorMessage);
-            }
-        }
+        String logFormatString = getResources().getString(R.string.log_list_string);
+        mLogAdapter = new WorkListAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                logFormatString
+                );
         
         setListAdapter(mLogAdapter);
+        
+        updateList();
         
         // リストの要素の背景色を透明にする
         getListView().setCacheColorHint(Color.argb(0, 0, 0, 0));
@@ -110,67 +90,26 @@ public class DetailViewer extends ListActivity {
         mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
     }
     
-    /**
-     * 指定されたインデックスに格納されたログデータが格納されたリストを作成する。
-     * @param logFileIndex リストに表示させたいログのインデックス番号
-     * @return ログの 1 行が 1 要素となっているリスト
-     * @throws IOException ログファイルの読み込みに失敗した場合
-     * @throws IllegalStateException 不正なログファイルのインデックス番号が指定された場合
-     */
-    private List<String> createLogList(int logFileIndex) throws IOException, IllegalStateException {
-        List<String> logList = new ArrayList<String>();
-        
-        // 不正なログファイルのインデックス番号が指定された場合
-        if (logFileIndex >= mLogFiles.length) {
-            throw new IllegalStateException("log file not found.");
-        }
-        
-        File logFile = mLogFiles[logFileIndex];
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(logFile)));
-        
-        String str = br.readLine();
-        while (str != null) {
-            logList.add(str);
-            str = br.readLine();
-        }
-        br.close();
-        
-        // 新しいものが上にくるようにリバース
-        Collections.reverse(logList);
-        return logList;
-    }
-
-    private class FileSorter implements Comparator<File> {
-        public int compare(File file1, File file2) {
-            String fileName1 = file1.getName();
-            String fileName2 = file2.getName();
-            return fileName1.compareTo(fileName2);
-        }
-    }
-    
     ////////////
     // ボタン設定
     
-    public void onNext(View view) throws IllegalStateException, IOException {
-        if (mCurrentLogFileIndex < mLogFiles.length - 1) {
-            mCurrentLogFileIndex++;
-            updateList();
-        }
+    public void onNext(View view) throws IllegalStateException {
+        mDataStore.next();
+        updateList();
     }
     
-    public void onPrev(View view) throws IllegalStateException, IOException {
-        if (mCurrentLogFileIndex > 0) {
-            mCurrentLogFileIndex--;
-            updateList();
-        }
+    public void onPrev(View view) throws IllegalStateException {
+        mDataStore.prev();
+        updateList();
     }
     
-    private void updateList() throws IllegalStateException, IOException {
+    private void updateList() throws IllegalStateException {
             mLogAdapter.clear();
-            List<String> logList = createLogList(mCurrentLogFileIndex);
-            for(String log : logList) {
+            List<Work> logList = mDataStore.getWorkList();
+            for(Work log : logList) {
                 mLogAdapter.add(log);
             }
+        setTitle(mDataStore.getCurrentDateName());
     }
     
     //////////////
@@ -201,10 +140,7 @@ public class DetailViewer extends ListActivity {
     
     private void sendLog() {
         Intent intent;
-        if (mLogFiles.length != 0) {
-            // 表示中のファイルを取得
-            File currentFile = mLogFiles[mCurrentLogFileIndex];
-            
+        if (mLogAdapter.getCount() != 0) {
             // ファイルの内容を取得
             StringBuffer sb = new StringBuffer();
             int itemNum = mLogAdapter.getCount();
@@ -215,7 +151,7 @@ public class DetailViewer extends ListActivity {
             
             intent = new Intent(Intent.ACTION_SEND, null);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, currentFile.getName());
+            intent.putExtra(Intent.EXTRA_SUBJECT, mDataStore.getCurrentDateName());
             intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
             startActivity(Intent.createChooser(intent, getResources()
                     .getString(R.string.choose_send_activity)));

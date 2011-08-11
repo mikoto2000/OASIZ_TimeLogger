@@ -26,12 +26,12 @@
 
 package jp.dip.oyasirazu.timelogger;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jp.dip.oyasirazu.timelogger.util.LogDumper;
+import jp.dip.oyasirazu.timelogger.util.DataStore;
+import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.Intent;
@@ -55,8 +55,6 @@ import android.widget.ToggleButton;
  */
 public class OASIZ_TimeLogger extends Activity {
     
-    static final String LOG_DIR = "logs";
-    
     private static final String IS_RECORDING = "IS_RECORDING"; 
     private static final String WORK_NAME = "WORK_NAME"; 
     private static final String START_TIME = "START_TIME"; 
@@ -69,10 +67,9 @@ public class OASIZ_TimeLogger extends Activity {
     private ListView mLogView;
     private ArrayAdapter<Work> mLogAdapter;
     
-    private LogDumper mLogger;
+    private DataStore mDataStore;
     private Date mStartDate;
     private SimpleDateFormat mDateFormat;
-    private String mLogFormatPattern;
     
     private ToggleButton mStartStopButton;
     
@@ -82,10 +79,9 @@ public class OASIZ_TimeLogger extends Activity {
         setContentView(R.layout.work_record);
         
         mResources = getResources();
-        mLogFormatPattern = mResources.getString(R.string.log_dump_format);
         mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         
-        mLogger = new LogDumper(getFilesDir() + File.separator + LOG_DIR);
+        mDataStore = new WorkLogDatabase(this, mDateFormat);
         
         mTimerView = (TimerView)findViewById(R.id.timer_view);
         
@@ -129,16 +125,8 @@ public class OASIZ_TimeLogger extends Activity {
             // リストビューに書き出し
             mLogAdapter.insert(work, 0);
             
-            // ログファイルに書き出し
-            String dumpMessage =
-                    String.format(
-                            mLogFormatPattern,
-                            mWorkName.getText().toString(),
-                            mDateFormat.format(mStartDate),
-                            mDateFormat.format(endDate)
-              );
-            
-            mLogger.dump(mStartDate, dumpMessage);
+            // ログ
+            mDataStore.dump(work);
         }
     }
     

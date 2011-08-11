@@ -26,6 +26,8 @@
 
 package jp.dip.oyasirazu.timelogger;
 
+import java.util.List;
+
 import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import android.content.Context;
 import android.view.View;
@@ -38,6 +40,15 @@ public class WorkListAdapter extends ArrayAdapter<Work> {
 
     public WorkListAdapter(Context context, int textViewResourceId, String logFormatString) {
         super(context, textViewResourceId);
+        init(logFormatString);
+    }
+    
+    public WorkListAdapter(Context context, int textViewResourceId, List<Work> list, String logFormatString) {
+        super(context, textViewResourceId, list);
+        init(logFormatString);
+    }
+    
+    private void init(String logFormatString) {
         mLogFormatString = logFormatString;
     }
     

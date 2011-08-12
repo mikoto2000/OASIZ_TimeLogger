@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;;
@@ -57,6 +58,9 @@ public class DetailViewer extends ListActivity {
     
     private ArrayAdapter<Work> mLogAdapter;
     
+    private Button mNextButton;
+    private Button mPrevButton;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +68,11 @@ public class DetailViewer extends ListActivity {
         
         mDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         mDataStore = new WorkLogDatabase(this, mDateFormat);
+        
+        mNextButton = (Button) findViewById(R.id.next);
+        mPrevButton = (Button) findViewById(R.id.prev);
+        
+        updateButtonsStatus();
         
         // リストの設定
         String logFormatString = getResources().getString(R.string.log_list_string);
@@ -96,11 +105,13 @@ public class DetailViewer extends ListActivity {
     public void onNext(View view) throws IllegalStateException {
         mDataStore.next();
         updateList();
+        updateButtonsStatus();
     }
     
     public void onPrev(View view) throws IllegalStateException {
         mDataStore.prev();
         updateList();
+        updateButtonsStatus();
     }
     
     private void updateList() throws IllegalStateException {
@@ -110,6 +121,20 @@ public class DetailViewer extends ListActivity {
                 mLogAdapter.add(log);
             }
         setTitle(mDataStore.getCurrentDateName());
+    }
+    
+    private void updateButtonsStatus() {
+        if (mDataStore.hasNext()) {
+            mNextButton.setEnabled(true);
+        } else {
+            mNextButton.setEnabled(false);
+        }
+        
+        if (mDataStore.hasPrev()) {
+            mPrevButton.setEnabled(true);
+        } else {
+            mPrevButton.setEnabled(false);
+        }
     }
     
     //////////////

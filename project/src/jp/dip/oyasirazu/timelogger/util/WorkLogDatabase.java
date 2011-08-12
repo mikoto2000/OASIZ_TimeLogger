@@ -61,13 +61,17 @@ public class WorkLogDatabase implements DataStore {
     private SimpleDateFormat mOnlyYmdFormat = new SimpleDateFormat("yyyy/MM/dd"); 
     
     private Date mCurrentDate;
+    private Date mLatestDate;
+    private Date mEarliestDate;
     
     public WorkLogDatabase(Context context, SimpleDateFormat dateFormat) {
         mDatabaseOpenHelper = new LogDatabaseOpenHelper(context);
         mDatabase = mDatabaseOpenHelper.getWritableDatabase();
         mDateFormat = dateFormat;
         
-        mCurrentDate = getLatestDate();
+        mEarliestDate = getEarliestDate();
+        mLatestDate = getLatestDate();
+        mCurrentDate = mLatestDate;
     }
 
     public List<Work> getWorkList() {
@@ -112,19 +116,37 @@ public class WorkLogDatabase implements DataStore {
     public String getCurrentDateName() {
         return mOnlyYmdFormat.format(mCurrentDate);
     }
+    
+    public boolean hasNext() {
+        if (mCurrentDate.before(mLatestDate)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasPrev() {
+        if (mCurrentDate.after(mEarliestDate)) {
+            return true;
+        }
+        return false;
+    }
 
     public void next() {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(mCurrentDate);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        mCurrentDate = calendar.getTime();
+        if (hasNext()) {
+            Calendar calendar = GregorianCalendar.getInstance();
+            calendar.setTime(mCurrentDate);
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            mCurrentDate = calendar.getTime();
+        }
     }
 
     public void prev() {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(mCurrentDate);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        mCurrentDate = calendar.getTime();
+        if (hasPrev()) {
+            Calendar calendar = GregorianCalendar.getInstance();
+            calendar.setTime(mCurrentDate);
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+            mCurrentDate = calendar.getTime();
+        }
     }
 
     public void dump(Work work) {
@@ -139,8 +161,23 @@ public class WorkLogDatabase implements DataStore {
                 values);
     }
     
+    private Date getEarliestDate() {
+        return getEstDate(true);
+    }
+    
     private Date getLatestDate() {
-        String latestDay;
+        return getEstDate(false);
+    }
+
+    private Date getEstDate(boolean isEarliest) {
+        String estDay;
+        String order;
+        
+        if (isEarliest) {
+            order = " asc";
+        } else {
+            order = " desc";
+        }
         
         // 最新のレコードを取得
         Cursor cursor = mDatabase.query(
@@ -150,7 +187,7 @@ public class WorkLogDatabase implements DataStore {
                 null,
                 null,
                 null,
-                START_DATE + " desc",
+                START_DATE + order,
                 "1");
         
         if (cursor.getCount() == 0) {
@@ -159,10 +196,10 @@ public class WorkLogDatabase implements DataStore {
         
         // 作業開始時間を取得
         cursor.moveToFirst();
-        latestDay = cursor.getString(1);
+        estDay = cursor.getString(1);
         
         try {
-            return mOnlyYmdFormat.parse(latestDay);
+            return mOnlyYmdFormat.parse(estDay);
         } catch (ParseException e) {
             return null;
         }

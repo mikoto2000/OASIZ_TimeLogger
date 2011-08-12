@@ -33,6 +33,8 @@ import jp.dip.oyasirazu.timelogger.Work;
 public interface DataStore {
     public List<Work> getWorkList();
     public String getCurrentDateName();
+    public boolean hasNext();
+    public boolean hasPrev();
     public void next();
     public void prev();
     public void dump(Work work);

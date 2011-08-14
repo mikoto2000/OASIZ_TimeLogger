@@ -35,14 +35,31 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+/**
+ * 作業記録のための Adapter です。
+ * @author mikoto
+ */
 public class WorkListAdapter extends ArrayAdapter<Work> {
     private String mLogFormatString;
 
+    /**
+     *  コンストラクタ
+     * @param context
+     * @param textViewResourceId
+     * @param logFormatString
+     */
     public WorkListAdapter(Context context, int textViewResourceId, String logFormatString) {
         super(context, textViewResourceId);
         init(logFormatString);
     }
     
+    /**
+     *  コンストラクタ
+     * @param context
+     * @param textViewResourceId
+     * @param list
+     * @param logFormatString
+     */
     public WorkListAdapter(Context context, int textViewResourceId, List<Work> list, String logFormatString) {
         super(context, textViewResourceId, list);
         init(logFormatString);

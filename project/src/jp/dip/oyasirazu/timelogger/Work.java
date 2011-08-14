@@ -28,6 +28,10 @@ package jp.dip.oyasirazu.timelogger;
 
 import java.util.Date;
 
+/**
+ * 1 件の作業記録を表すクラスです。
+ * @author mikoto
+ */
 public class Work {
     public static int INVALID_NO = -1;
     
@@ -36,10 +40,24 @@ public class Work {
     private Date mStartDate;
     private Date mEndDate;
     
+    /**
+     * 作業番号未指定で作業記録を作成します。
+     * @param name 作業名
+     * @param startDate 作業開始時刻
+     * @param endDate 作業終了時刻
+     * @see INVALID_NO
+     */
     public Work(String name, Date startDate, Date endDate) {
         this(INVALID_NO, name, startDate, endDate);
     }
     
+    /**
+     * 作業番号を指定して、作業記録を作成します。
+     * @param workNo 作業番号
+     * @param name 作業名
+     * @param startDate 作業開始時刻
+     * @param endDate 作業終了時刻
+     */
     public Work(int workNo, String name, Date startDate, Date spentTime) {
         this.mWorkNo = workNo;
         this.mName = name;

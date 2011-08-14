@@ -37,6 +37,10 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+/**
+ * 作業時間を表示する View です。
+ * @author mikoto
+ */
 public class TimerView extends TextView {
     
     private long mCurrentTime;

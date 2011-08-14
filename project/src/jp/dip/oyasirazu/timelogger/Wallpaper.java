@@ -44,6 +44,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.view.View;
 
+/**
+ * 壁紙の情報を管理するクラスです。
+ * @author mikoto
+ */
 public class Wallpaper {
     
     private static final String WALLPAPER_DIR = "wallpaper"; 
@@ -80,17 +84,28 @@ public class Wallpaper {
         }
     }
     
+    /**
+     * 壁紙記録用のディレクトリを作成します。
+     */
     private void createWallpaperDir() {
         if (!mWallpaperDir.exists()) {
             mWallpaperDir.mkdirs();
         }
     }
     
+    /**
+     * 壁紙を削除します。
+     */
     public void clearWallpaper() {
         mWallpaperFile.delete();
         mRootLayout.setBackgroundDrawable(null);
     }
     
+    /**
+     * 壁紙を選択のため、画像選択用のアクティビティを実行します。
+     * @param activity 元のアクティビティ
+     * @param requestCode 元のアクティビティが処理を判断するための requestCode
+     */
     public static void chooseWallpaper(Activity activity, int requestCode) {
         // ギャラリーから画像を選択し、バックグラウンドに設定する。
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -98,6 +113,12 @@ public class Wallpaper {
         activity.startActivityForResult(intent, requestCode);
     }
     
+    /**
+     * 壁紙を設定します。
+     * @param contentResolver 元アクティビティの ContentResolver
+     * @param uri 画像の URI
+     * @throws IOException ファイルの読み込み・書き込みに失敗した場合
+     */
     public void setWallpaper(ContentResolver contentResolver, Uri uri) throws IOException {
         //////////////////////////////////////////////////////////////////////////////
         // Uri から画像を取得し、リサイズしたのちアプリケーションディレクトリ内に記録する
@@ -131,6 +152,11 @@ public class Wallpaper {
         mRootLayout.setBackgroundDrawable(drawable);
     }
     
+    /**
+     * 壁紙設定用ダイアログを表示します。
+     * @param activity 元のアクティビティ
+     * @param requestCode 元のアクティビティが処理を判断するための requestCode
+     */
     public void openWallpaperDialog(final Activity activity, final int requestCode) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
                 activity);

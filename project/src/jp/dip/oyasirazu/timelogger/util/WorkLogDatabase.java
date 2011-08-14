@@ -42,6 +42,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import jp.dip.oyasirazu.timelogger.Work;
 
+/**
+ * DataStore の、 SQLiteDatabase を使った実装です。
+ * @author mikoto
+ */
 public class WorkLogDatabase implements DataStore {
     
     public static final String TABLE_NAME = "log_tbl";
@@ -71,10 +75,15 @@ public class WorkLogDatabase implements DataStore {
     // 年月日までしか表示しないフォーマット
     private SimpleDateFormat mOnlyYmdFormat = new SimpleDateFormat("yyyy/MM/dd"); 
     
-    private Date mCurrentDate;
+    private Date mDisplayDate;
     private Date mLatestDate;
     private Date mEarliestDate;
     
+    /**
+     * コンストラクタ
+     * @param context
+     * @param dateFormat
+     */
     public WorkLogDatabase(Context context, SimpleDateFormat dateFormat) {
         mDateFormat = dateFormat;
         mDatabaseOpenHelper = new LogDatabaseOpenHelper(context);
@@ -82,16 +91,19 @@ public class WorkLogDatabase implements DataStore {
         
         mEarliestDate = getEarliestDate();
         mLatestDate = getLatestDate();
-        mCurrentDate = mLatestDate;
+        mDisplayDate = mLatestDate;
         
         // Date が null ならば、今日の日付を入れる
-        if (mCurrentDate == null) {
-            mCurrentDate = mLatestDate = mEarliestDate = new Date();
+        if (mDisplayDate == null) {
+            mDisplayDate = mLatestDate = mEarliestDate = new Date();
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public List<Work> getWorkList() {
-        if (mCurrentDate == null) {
+        if (mDisplayDate == null) {
             return new ArrayList<Work>();
         }
         
@@ -129,43 +141,61 @@ public class WorkLogDatabase implements DataStore {
         
         return workList;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public String getCurrentDateName() {
-        return mOnlyYmdFormat.format(mCurrentDate);
+        return mOnlyYmdFormat.format(mDisplayDate);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasNext() {
-        if (mCurrentDate.before(mLatestDate)) {
+        if (mDisplayDate.before(mLatestDate)) {
             return true;
         }
         return false;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPrev() {
-        if (mCurrentDate.after(mEarliestDate)) {
+        if (mDisplayDate.after(mEarliestDate)) {
             return true;
         }
         return false;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void next() {
         if (hasNext()) {
             Calendar calendar = GregorianCalendar.getInstance();
-            calendar.setTime(mCurrentDate);
+            calendar.setTime(mDisplayDate);
             calendar.add(Calendar.DAY_OF_YEAR, 1);
-            mCurrentDate = calendar.getTime();
+            mDisplayDate = calendar.getTime();
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void prev() {
         if (hasPrev()) {
             Calendar calendar = GregorianCalendar.getInstance();
-            calendar.setTime(mCurrentDate);
+            calendar.setTime(mDisplayDate);
             calendar.add(Calendar.DAY_OF_YEAR, -1);
-            mCurrentDate = calendar.getTime();
+            mDisplayDate = calendar.getTime();
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void add(Work work) {
         ContentValues values = new ContentValues();
         values.put(WORK_NAME, work.getName());
@@ -178,6 +208,9 @@ public class WorkLogDatabase implements DataStore {
                 values);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void update(int beforWorkNo, Work afterWork) {
         ContentValues values = new ContentValues();
         values.put(WORK_NAME, afterWork.getName());
@@ -194,10 +227,18 @@ public class WorkLogDatabase implements DataStore {
                 );
     }
     
+    /**
+     * 一番古い作業記録の年月日の情報を格納した Date を取得します。
+     * @return 一番古い作業記録の年月日の情報を格納した Date
+     */
     private Date getEarliestDate() {
         return getEstDate(true);
     }
     
+    /**
+     * 一番新しい作業記録の年月日の情報を格納した Date を取得します。
+     * @return 一番新しい作業記録の年月日の情報を格納した Date
+     */
     private Date getLatestDate() {
         return getEstDate(false);
     }
@@ -238,14 +279,26 @@ public class WorkLogDatabase implements DataStore {
         }
     }
 
+    /**
+     * WorkLogger 用 SQLiteDatabaseOpenHelper です。
+     * @author mikoto
+     */
     private class LogDatabaseOpenHelper extends SQLiteOpenHelper {
         private static final String DB_NAME = "log.db";
         private static final int VERSION = 2;
-
+        
+        /**
+         * コンストラクタ
+         * @param context
+         */
         public LogDatabaseOpenHelper(Context context) {
             super(context, DB_NAME, null, VERSION);
         }
-
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table " + TABLE_NAME + "(" +
                     WORK_NO + " integer primary key autoincrement, " +
@@ -253,7 +306,11 @@ public class WorkLogDatabase implements DataStore {
                     START_DATE + " text, " +
                     END_DATE + " text);");
         }
-
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (oldVersion == 1 &&
                     newVersion == 2) {
@@ -291,7 +348,10 @@ public class WorkLogDatabase implements DataStore {
             }
         }
         
-        public List<Work> getWorkList(SQLiteDatabase db) {
+        /**
+         * データベース内のすべての作業記録を取得します。
+         */
+        private List<Work> getWorkList(SQLiteDatabase db) {
             // 現在のデータを取得
             Cursor cursor = db.query(TABLE_NAME, OLD_COLUMNS, null, null, null, null, null, null);
             

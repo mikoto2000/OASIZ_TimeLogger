@@ -26,6 +26,10 @@
 
 package jp.dip.oyasirazu.timelogger.util;
 
+/**
+ * 時間・時刻操作に便利な機能を提供します。
+ * @author mikoto
+ */
 public class TimeUtility {
     
     private static final String DEFAULT_TIME_PATTERN = "%1$02d:%2$02d:%3$02d";

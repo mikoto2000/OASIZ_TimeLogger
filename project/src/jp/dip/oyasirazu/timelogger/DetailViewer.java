@@ -53,6 +53,11 @@ import android.widget.Toast;
 
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;
 
+/**
+ * 作業記録の詳細を見るためのアクティビティ
+ * @author mikoto
+ *
+ */
 public class DetailViewer extends ListActivity {
     
     private Wallpaper mWallpaper;
@@ -108,9 +113,14 @@ public class DetailViewer extends ListActivity {
     @Override
     protected void onListItemClick(ListView listView, View v, int position, long id) {
         Work work = mLogAdapter.getItem(position);
+        
+        // 作業名変更ダイアログを表示
         openRenameDialog(work, position);
     };
     
+    /**
+     * 作業名変更ダイアログを表示
+     */
     private void openRenameDialog(final Work beforWork, final int position) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
                 this);
@@ -154,19 +164,33 @@ public class DetailViewer extends ListActivity {
     
     ////////////
     // ボタン設定
-    public void onNext(View view) throws IllegalStateException {
+    
+    /**
+     * next ボタンが押された時の処理。<br />
+     * 次の日付のログが存在するなら、次の日付のログを表示します。
+     * @param view
+     */
+    public void onNext(View view) {
         mDataStore.next();
         updateList();
         updateButtonsStatus();
     }
     
-    public void onPrev(View view) throws IllegalStateException {
+    /**
+     * prev ボタンが押された時の処理
+     * 前の日付のログが存在するなら、次の日付のログを表示します。
+     * @param view
+     */
+    public void onPrev(View view) {
         mDataStore.prev();
         updateList();
         updateButtonsStatus();
     }
     
-    private void updateList() throws IllegalStateException {
+    /**
+     * 現在日に設定されている日付の情報を、リストアクティビティに表示します。
+     */
+    private void updateList() {
             mLogAdapter.clear();
             List<Work> logList = mDataStore.getWorkList();
             for(Work log : logList) {
@@ -175,6 +199,9 @@ public class DetailViewer extends ListActivity {
         setTitle(mDataStore.getCurrentDateName());
     }
     
+    /**
+     * 前・次の日のデータがない場合、ボタンを無効化します。
+     */
     private void updateButtonsStatus() {
         if (mDataStore.hasNext()) {
             mNextButton.setEnabled(true);
@@ -215,6 +242,9 @@ public class DetailViewer extends ListActivity {
         return true;
     }
     
+    /**
+     * 現在日の情報を、 ACTION_SEND に対応しているアクティビティに渡します。
+     */
     private void sendLog() {
         Intent intent;
         if (mLogAdapter.getCount() != 0) {

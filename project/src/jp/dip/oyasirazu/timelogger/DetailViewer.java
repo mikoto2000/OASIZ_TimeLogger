@@ -222,8 +222,15 @@ public class DetailViewer extends ListActivity {
             StringBuffer sb = new StringBuffer();
             int itemNum = mLogAdapter.getCount();
             for (int i = 0; i < itemNum; i++) {
-                sb.append(mLogAdapter.getItem(i));
-                sb.append("\n");
+                // 「"作業名", "開示時刻", "終了時刻"\n」のフォーマットで吐き出す。
+                Work work = mLogAdapter.getItem(i);
+                sb.append('"');
+                sb.append(work.getName());
+                sb.append("\", \"");
+                sb.append(mDateFormat.format(work.getStartDate()));
+                sb.append("\", \"");
+                sb.append(mDateFormat.format(work.getStartDate()));
+                sb.append("\"\n");
             }
             
             intent = new Intent(Intent.ACTION_SEND, null);

@@ -7,7 +7,6 @@
     
     <string name="start_record">記録開始</string>
     <string name="stop_record">記録終了</string>
-    <string name="interrupt">割り込み</string>
     <string name="detail">詳細</string>
     
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>

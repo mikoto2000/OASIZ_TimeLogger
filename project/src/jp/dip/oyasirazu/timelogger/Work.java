@@ -29,14 +29,30 @@ package jp.dip.oyasirazu.timelogger;
 import java.util.Date;
 
 public class Work {
+    public static int INVALID_NO = -1;
+    
+    private int mWorkNo;
     private String mName;
     private Date mStartDate;
     private Date mEndDate;
     
-    public Work(String name, Date startDate, Date spentTime) {
+    public Work(String name, Date startDate, Date endDate) {
+        this(INVALID_NO, name, startDate, endDate);
+    }
+    
+    public Work(int workNo, String name, Date startDate, Date spentTime) {
+        this.mWorkNo = workNo;
         this.mName = name;
         this.mStartDate = startDate;
         this.mEndDate = spentTime;
+    }
+    
+    public int getWorkNo() {
+        return mWorkNo;
+    }
+    
+    public void setWorkNo(int no) {
+        this.mWorkNo = no;
     }
     
     public String getName() {

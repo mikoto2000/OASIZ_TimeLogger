@@ -48,7 +48,6 @@
             android:layout_width="fill_parent"
             android:background="@drawable/start_stop_button">
         </ToggleButton>
-        <Button android:text="@string/interrupt" android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
         <Button android:onClick="onDetail" android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="fill_parent"></Button>
     </LinearLayout>
 </LinearLayout>

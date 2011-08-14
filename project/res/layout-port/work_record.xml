@@ -34,7 +34,6 @@
             android:layout_width="wrap_content"
             android:background="@drawable/start_stop_button">
         </ToggleButton>
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/interrupt"></Button>
         <Button android:onClick="onDetail" android:layout_width="wrap_content" android:text="@string/detail" android:layout_height="wrap_content"></Button>
     </LinearLayout>
     <ListView

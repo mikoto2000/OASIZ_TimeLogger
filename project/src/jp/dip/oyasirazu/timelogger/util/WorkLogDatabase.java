@@ -45,14 +45,23 @@ import jp.dip.oyasirazu.timelogger.Work;
 public class WorkLogDatabase implements DataStore {
     
     public static final String TABLE_NAME = "log_tbl";
+    
+    public static final String WORK_NO = "work_no";
     public static final String WORK_NAME = "work_name";
     public static final String START_DATE = "start_date";
     public static final String END_DATE = "end_date";
-    public static final String[] COLUMNS = {WORK_NAME, START_DATE, END_DATE};
+    
+    public static final int WORK_NO_COLUMN = 0;
+    public static final int WORK_NAME_COLUMN = 1;
+    public static final int START_DATE_COLUMN = 2;
+    public static final int END_DATE_COLUMN = 3;
+    
+    private static final String[] OLD_COLUMNS = {WORK_NAME, START_DATE, END_DATE};
+    public static final String[] COLUMNS = {WORK_NO, WORK_NAME, START_DATE, END_DATE};
     
     public static final String SELECTION = START_DATE + " like ?";
     
-    public static final String UPDATE_CLAUSE = START_DATE + " == ?";
+    public static final String UPDATE_CLAUSE = WORK_NO + " == ?";
     
     private LogDatabaseOpenHelper mDatabaseOpenHelper;
     private SQLiteDatabase mDatabase;
@@ -67,9 +76,9 @@ public class WorkLogDatabase implements DataStore {
     private Date mEarliestDate;
     
     public WorkLogDatabase(Context context, SimpleDateFormat dateFormat) {
+        mDateFormat = dateFormat;
         mDatabaseOpenHelper = new LogDatabaseOpenHelper(context);
         mDatabase = mDatabaseOpenHelper.getWritableDatabase();
-        mDateFormat = dateFormat;
         
         mEarliestDate = getEarliestDate();
         mLatestDate = getLatestDate();
@@ -107,9 +116,10 @@ public class WorkLogDatabase implements DataStore {
         do {
             try {
                 Work work = new Work(
-                        cursor.getString(0),
-                        mDateFormat.parse(cursor.getString(1)),
-                        mDateFormat.parse(cursor.getString(2))
+                        cursor.getInt(WORK_NO_COLUMN),
+                        cursor.getString(WORK_NAME_COLUMN),
+                        mDateFormat.parse(cursor.getString(START_DATE_COLUMN)),
+                        mDateFormat.parse(cursor.getString(END_DATE_COLUMN))
                         );
                 workList.add(work);
             } catch (ParseException e) {
@@ -168,13 +178,13 @@ public class WorkLogDatabase implements DataStore {
                 values);
     }
     
-    public void update(Work beforWork, Work afterWork) {
+    public void update(int beforWorkNo, Work afterWork) {
         ContentValues values = new ContentValues();
         values.put(WORK_NAME, afterWork.getName());
         values.put(START_DATE, mDateFormat.format(afterWork.getStartDate()));
         values.put(END_DATE, mDateFormat.format(afterWork.getEndDate()));
         
-        String[] whereArgs = {mDateFormat.format(beforWork.getStartDate())};
+        String[] whereArgs = {String.valueOf(beforWorkNo)};
         
         mDatabase.update(
                 TABLE_NAME,
@@ -219,7 +229,7 @@ public class WorkLogDatabase implements DataStore {
         
         // 作業開始時間を取得
         cursor.moveToFirst();
-        estDay = cursor.getString(1);
+        estDay = cursor.getString(START_DATE_COLUMN);
         
         try {
             return mOnlyYmdFormat.parse(estDay);
@@ -230,7 +240,7 @@ public class WorkLogDatabase implements DataStore {
 
     private class LogDatabaseOpenHelper extends SQLiteOpenHelper {
         private static final String DB_NAME = "log.db";
-        private static final int VERSION = 1;
+        private static final int VERSION = 2;
 
         public LogDatabaseOpenHelper(Context context) {
             super(context, DB_NAME, null, VERSION);
@@ -238,14 +248,73 @@ public class WorkLogDatabase implements DataStore {
 
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table " + TABLE_NAME + "(" +
+                    WORK_NO + " integer primary key autoincrement, " +
                     WORK_NAME + " text, " +
                     START_DATE + " text, " +
                     END_DATE + " text);");
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // not implement
+            if (oldVersion == 1 &&
+                    newVersion == 2) {
+                // 現在のデータを取得
+                List<Work> list = getWorkList(db);
+                
+                // 旧テーブルの削除
+                db.execSQL("drop table " + TABLE_NAME + ";");
+                
+                // 新テーブルの作成
+                db.execSQL("create table " + TABLE_NAME + "(" +
+                        WORK_NO + " integer primary key autoincrement, " +
+                        WORK_NAME + " text, " +
+                        START_DATE + " text, " +
+                        END_DATE + " text);");
+                
+                db.beginTransaction();
+                
+                for (Work work : list) {
+                    ContentValues values = new ContentValues();
+                    values.put(WORK_NAME, work.getName());
+                    values.put(START_DATE, mDateFormat.format(work.getStartDate()));
+                    values.put(END_DATE, mDateFormat.format(work.getEndDate()));
+                    
+                    db.insert(
+                            TABLE_NAME,
+                            null,
+                            values);
+                }
+                
+                // コミット
+                db.setTransactionSuccessful();
+                db.endTransaction();
+                
+            }
+        }
+        
+        public List<Work> getWorkList(SQLiteDatabase db) {
+            // 現在のデータを取得
+            Cursor cursor = db.query(TABLE_NAME, OLD_COLUMNS, null, null, null, null, null, null);
+            
+            List<Work> workList = new ArrayList<Work>();
+            if (cursor.getCount() == 0) {
+                return workList;
+            }
+            
+            cursor.moveToFirst();
+            do {
+                try {
+                    Work work = new Work(
+                            cursor.getString(WORK_NAME_COLUMN),
+                            mDateFormat.parse(cursor.getString(START_DATE_COLUMN)),
+                            mDateFormat.parse(cursor.getString(END_DATE_COLUMN))
+                    );
+                    workList.add(work);
+                } catch (ParseException e) {
+                    // パースに失敗したレコードは無視する。(削除したほうがよいか？)
+                }
+            } while (cursor.moveToNext());
+            
+            return workList;
         }
     }
-
 }

@@ -7,7 +7,6 @@
     
     <string name="start_record">Start Rec</string>
     <string name="stop_record">Stop Rec</string>
-    <string name="interrupt">Interrupt</string>
     <string name="detail">Detail</string>
     
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>

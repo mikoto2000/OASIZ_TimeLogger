@@ -138,7 +138,7 @@ public class DetailViewer extends ListActivity {
                         mLogAdapter.remove(beforWork);
                         
                         // DataStore 内の情報を更新
-                        mDataStore.update(beforWork, afterWork);
+                        mDataStore.update(beforWork.getWorkNo(), afterWork);
                         }
                     });
         

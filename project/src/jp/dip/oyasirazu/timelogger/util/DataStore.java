@@ -38,6 +38,6 @@ public interface DataStore {
     public void next();
     public void prev();
     public void add(Work work);
-    public void update(Work beforWork, Work afterWork);
+    public void update(int beforWorkNo, Work afterWork);
 
 }

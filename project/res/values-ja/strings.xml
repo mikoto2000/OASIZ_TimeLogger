@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OASIZ_TimeLogger</string>
+    <string name="app_name">OASIZ_作業記録</string>
     
     <string name="work_name">作業名</string>
     <string name="time_pattern">"%1$02d:%2$02d:%3$02d"</string>

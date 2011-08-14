@@ -60,6 +60,10 @@ public class WorkLogDatabase implements DataStore {
     public static final int START_DATE_COLUMN = 2;
     public static final int END_DATE_COLUMN = 3;
     
+    public static final int OLD_WORK_NAME_COLUMN = 0;
+    public static final int OLD_START_DATE_COLUMN = 1;
+    public static final int OLD_END_DATE_COLUMN = 2;
+    
     private static final String[] OLD_COLUMNS = {WORK_NAME, START_DATE, END_DATE};
     public static final String[] COLUMNS = {WORK_NO, WORK_NAME, START_DATE, END_DATE};
     
@@ -364,9 +368,9 @@ public class WorkLogDatabase implements DataStore {
             do {
                 try {
                     Work work = new Work(
-                            cursor.getString(WORK_NAME_COLUMN),
-                            mDateFormat.parse(cursor.getString(START_DATE_COLUMN)),
-                            mDateFormat.parse(cursor.getString(END_DATE_COLUMN))
+                            cursor.getString(OLD_WORK_NAME_COLUMN),
+                            mDateFormat.parse(cursor.getString(OLD_START_DATE_COLUMN)),
+                            mDateFormat.parse(cursor.getString(OLD_END_DATE_COLUMN))
                     );
                     workList.add(work);
                 } catch (ParseException e) {

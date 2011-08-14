@@ -91,7 +91,7 @@ public class OASIZ_TimeLogger extends Activity {
         
         mLogView = (ListView)findViewById(R.id.log_view);
         String logFormatString = mResources.getString(R.string.log_list_string);
-        mLogAdapter = new WorkListAdapter(this, R.layout.list_column, logFormatString);
+        mLogAdapter = new WorkListAdapter(this, R.layout.list_column, mDataStore.getWorkList(), logFormatString);
         
         mLogView.setAdapter(mLogAdapter);
         mLogView.setDividerHeight(0);

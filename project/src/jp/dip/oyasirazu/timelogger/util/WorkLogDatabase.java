@@ -52,6 +52,8 @@ public class WorkLogDatabase implements DataStore {
     
     public static final String SELECTION = START_DATE + " like ?";
     
+    public static final String UPDATE_CLAUSE = START_DATE + " == ?";
+    
     private LogDatabaseOpenHelper mDatabaseOpenHelper;
     private SQLiteDatabase mDatabase;
 
@@ -72,6 +74,11 @@ public class WorkLogDatabase implements DataStore {
         mEarliestDate = getEarliestDate();
         mLatestDate = getLatestDate();
         mCurrentDate = mLatestDate;
+        
+        // Date が null ならば、今日の日付を入れる
+        if (mCurrentDate == null) {
+            mCurrentDate = mLatestDate = mEarliestDate = new Date();
+        }
     }
 
     public List<Work> getWorkList() {
@@ -149,7 +156,7 @@ public class WorkLogDatabase implements DataStore {
         }
     }
 
-    public void dump(Work work) {
+    public void add(Work work) {
         ContentValues values = new ContentValues();
         values.put(WORK_NAME, work.getName());
         values.put(START_DATE, mDateFormat.format(work.getStartDate()));
@@ -159,6 +166,22 @@ public class WorkLogDatabase implements DataStore {
                 TABLE_NAME,
                 null,
                 values);
+    }
+    
+    public void update(Work beforWork, Work afterWork) {
+        ContentValues values = new ContentValues();
+        values.put(WORK_NAME, afterWork.getName());
+        values.put(START_DATE, mDateFormat.format(afterWork.getStartDate()));
+        values.put(END_DATE, mDateFormat.format(afterWork.getEndDate()));
+        
+        String[] whereArgs = {mDateFormat.format(beforWork.getStartDate())};
+        
+        mDatabase.update(
+                TABLE_NAME,
+                values,
+                UPDATE_CLAUSE,
+                whereArgs
+                );
     }
     
     private Date getEarliestDate() {

@@ -126,7 +126,7 @@ public class OASIZ_TimeLogger extends Activity {
             mLogAdapter.insert(work, 0);
             
             // ログ
-            mDataStore.dump(work);
+            mDataStore.add(work);
         }
     }
     

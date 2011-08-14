@@ -37,6 +37,7 @@ public interface DataStore {
     public boolean hasPrev();
     public void next();
     public void prev();
-    public void dump(Work work);
+    public void add(Work work);
+    public void update(Work beforWork, Work afterWork);
 
 }

@@ -13,6 +13,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailViewer" />
+        <activity android:name=".DetailViewer" android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
     </application>
 </manifest>

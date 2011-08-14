@@ -33,7 +33,9 @@ import java.util.List;
 import jp.dip.oyasirazu.timelogger.util.DataStore;
 import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,9 +47,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;;
+import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;
 
 public class DetailViewer extends ListActivity {
     
@@ -100,8 +104,56 @@ public class DetailViewer extends ListActivity {
     }
     
     ////////////
-    // ボタン設定
+    // 作業名変更
+    @Override
+    protected void onListItemClick(ListView listView, View v, int position, long id) {
+        Work work = mLogAdapter.getItem(position);
+        openRenameDialog(work, position);
+    };
     
+    private void openRenameDialog(final Work beforWork, final int position) {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                this);
+        
+        final EditText editText = new EditText(this);
+        editText.setText(beforWork.getName());
+        
+        // 表示項目とリスナの設定
+        dialogBuilder.setTitle(R.string.edit_work_name);
+        dialogBuilder.setView(editText);
+        
+        // OK ボタンを押された場合、リストとデータストアのデータを更新する。
+        dialogBuilder.setPositiveButton(R.string.edit_work_name_ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int chButton) {
+                        
+                        // 作用名が変更された Work オブジェクトを作成
+                        Work afterWork = new Work(
+                                editText.getText().toString(),
+                                beforWork.getStartDate(),
+                                beforWork.getEndDate());
+                        
+                        // リストの情報を更新
+                        mLogAdapter.insert(afterWork, position);
+                        mLogAdapter.remove(beforWork);
+                        
+                        // DataStore 内の情報を更新
+                        mDataStore.update(beforWork, afterWork);
+                        }
+                    });
+        
+        // キャンセルボタンを押されても何もしない
+        dialogBuilder.setNegativeButton(R.string.edit_work_name_cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int chButton) {}
+                    });
+        
+        // ダイアログを表示
+        dialogBuilder.create().show();
+    }
+    
+    ////////////
+    // ボタン設定
     public void onNext(View view) throws IllegalStateException {
         mDataStore.next();
         updateList();

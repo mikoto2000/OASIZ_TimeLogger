@@ -30,6 +30,11 @@
         <item>Choose from gallery</item>
     </string-array>
     
+    <!-- detail view message -->
+    <string name="edit_work_name">Edit work name</string>
+    <string name="edit_work_name_ok">OK</string>
+    <string name="edit_work_name_cancel">Cancel</string>
+    
     <!-- error messages -->
     <string name="no_log_data">log data not found.</string>
     <string name="image_io_error">image input/output error.</string>

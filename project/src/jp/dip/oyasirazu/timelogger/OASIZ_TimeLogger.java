@@ -106,6 +106,18 @@ public class OASIZ_TimeLogger extends Activity {
         mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
     }
     
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLogAdapter.clear();
+        
+        for (Work work : mDataStore.getWorkList()) {
+            mLogAdapter.add(work);
+        }
+        
+        
+    };
+    
     /**
      * 作業時間の記録開始・終了を行います。
      * @param view 記録開始・終了トグルボタン

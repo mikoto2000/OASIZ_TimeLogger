@@ -28,7 +28,6 @@ package jp.dip.oyasirazu.timelogger;
 
 import java.util.List;
 
-import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,8 +78,9 @@ public class WorkListAdapter extends ArrayAdapter<Work> {
                 String.format(
                         mLogFormatString,
                         work.getName(),
-                        TimeUtility.formatSpentTime(work.getSpentTime())
-          ));
+                        work.getStartDate(),
+                        work.getEndDate(),
+                        work.getSpentTime() / 60000)); // 分表示にする
         
         return view;
     }

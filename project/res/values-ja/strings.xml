@@ -10,9 +10,8 @@
     <string name="detail">詳細</string>
     
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>
-    <string name="log_string">"%1$s : %2$d"</string>
+    <string name="log_list_string">"作業名 : %1$s\n 開始時間 : %2$tF %2$tT\n 終了時間 : %3$tF %3$tT\n 作業時間 : %4$d 分"</string>
     
-    <string name="no_log_data">ログデータがありません。</string>
     <string name="next">次へ</string>
     <string name="prev">前へ</string>
     
@@ -34,6 +33,7 @@
     <string name="edit_work_name_cancel">キャンセル</string>
     
     <!-- エラーメッセージ -->
+    <string name="no_log_data">ログデータがありません。</string>
     <string name="log_input_error">ログファイルの読み込みに失敗しました。</string>
     <string name="image_io_error">画像の入出力に失敗しました。</string>
 </resources>

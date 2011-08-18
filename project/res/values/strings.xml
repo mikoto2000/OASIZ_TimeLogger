@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="transparent">#00000000</color>
-    
     <string name="app_name">OASIZ_TimeLogger</string>
     
     <string name="work_name">Work Name</string>
@@ -12,12 +10,10 @@
     <string name="detail">Detail</string>
     
     <string name="log_dump_format">"\"%1$s\", \"%2$s\", \"%3$s\"\n"</string>
-    <string name="log_list_string">"%1$s : %2$s"</string>
+    <string name="log_list_string">"Work name : %1$s\n Start time : %2$tF %2$tT\n End time : %3$tF %3$tT\n Spent time : %4$d minutes"</string>
     
     <string name="next">next</string>
     <string name="prev">prev</string>
-    
-    <string name="log_input_error">log file read error.</string>
     
     <string name="menu_wallpaper">WallPaper</string>
     <string name="menu_send">Send</string>
@@ -38,5 +34,6 @@
     
     <!-- error messages -->
     <string name="no_log_data">log data not found.</string>
+    <string name="log_input_error">log file read error.</string>
     <string name="image_io_error">image input/output error.</string>
 </resources>

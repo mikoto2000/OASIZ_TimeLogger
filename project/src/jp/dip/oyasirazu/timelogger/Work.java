@@ -33,8 +33,14 @@ import java.util.Date;
  * @author mikoto
  */
 public class Work {
-    public static int INVALID_NO = -1;
+    /**
+     * 番号未指定の代表として INVALID_NO を定義
+     */
+    public static int INVALID_NO = Integer.MIN_VALUE;
     
+    /**
+     * 作業番号。番号未指定の場合は負数。
+     */
     private int mWorkNo;
     private String mName;
     private Date mStartDate;
@@ -58,11 +64,27 @@ public class Work {
      * @param startDate 作業開始時刻
      * @param endDate 作業終了時刻
      */
-    public Work(int workNo, String name, Date startDate, Date spentTime) {
+    public Work(int workNo, String name, Date startDate, Date endDate) {
+        if (name == null) {
+            throw new NullPointerException("Not allow null in 'name'.");
+        }
+        
+        if (startDate == null) {
+            throw new NullPointerException("Not allow null in 'startDate'.");
+        }
+        
+        if (endDate == null) {
+            throw new NullPointerException("Not allow null in 'endDate'.");
+        }
+        
+        if (endDate.before(startDate)) {
+            throw new NullPointerException("Not allow endDate before than startDate.");
+        }
+        
         this.mWorkNo = workNo;
         this.mName = name;
         this.mStartDate = startDate;
-        this.mEndDate = spentTime;
+        this.mEndDate = endDate;
     }
     
     public int getWorkNo() {
@@ -78,6 +100,9 @@ public class Work {
     }
     
     public void setName(String name) {
+        if (name == null) {
+            throw new NullPointerException("Not allow null in 'name'.");
+        }
         this.mName = name;
     }
     
@@ -85,8 +110,19 @@ public class Work {
         return mStartDate;
     }
     
-    public void setStartDate(Date startTime) {
-        this.mStartDate = startTime;
+    public void setStartDate(Date startDate) {
+        if (startDate == null) {
+            throw new NullPointerException("Not allow null in 'startDate'.");
+        }
+        
+        if (mEndDate.before(mStartDate)) {
+            throw new IllegalArgumentException("Not allow endDate before than startDate.");
+        }
+        
+        if (mEndDate.equals(mStartDate)) {
+            throw new IllegalArgumentException("Not allow endDate equals startDate.");
+        }
+        this.mStartDate = startDate;
     }
     
     public Date getEndDate() {
@@ -94,10 +130,45 @@ public class Work {
     }
     
     public void setEndDate(Date endDate) {
+        if (endDate == null) {
+            throw new NullPointerException("Not allow null in 'endDate'.");
+        }
+        
+        if (mEndDate.before(mStartDate)) {
+            throw new IllegalArgumentException("Not allow endDate before than startDate.");
+        }
+        
+        if (mEndDate.equals(mStartDate)) {
+            throw new IllegalArgumentException("Not allow endDate equals startDate.");
+        }
+        
         this.mEndDate = endDate;
     }
     
+    public void setDates(Date startDate, Date endDate) {
+        if (startDate == null) {
+            throw new NullPointerException("Not allow null in 'startDate'.");
+        }
+        
+        if (endDate == null) {
+            throw new NullPointerException("Not allow null in 'endDate'.");
+        }
+        
+        if (endDate.before(startDate)) {
+            throw new IllegalArgumentException("Not allow endDate before than startDate.");
+        }
+        
+        if (endDate.equals(startDate)) {
+            throw new IllegalArgumentException("Not allow endDate equals startDate.");
+        }
+        
+        mStartDate = startDate;
+        mEndDate = endDate;
+    }
+    
     public long getSpentTime() {
+        // getter/setter を使う限り、これを呼び出す時点では、 2 つの Date に矛盾が発生しない。
+        
         return this.mEndDate.getTime() - this.mStartDate.getTime();
     }
 }

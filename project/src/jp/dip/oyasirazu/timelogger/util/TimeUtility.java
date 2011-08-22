@@ -39,11 +39,15 @@ public class TimeUtility {
     private TimeUtility() {}
     
     /**
-     * 作業時間をフォーマット文字列に変換します。
+     * 作業時間(msec)をフォーマット文字列(hh:mm:ss)に変換します。
      * @param spentTimeMsec 作業時間(msec)
-     * @return フォーマット文字列
+     * @return フォーマット文字列(hh:mm:ss)
      */
     public static String formatSpentTime(long spentTimeMsec) {
+        if (spentTimeMsec < 0) {
+            throw new IllegalArgumentException("Not allow negative numbers in 'spentTimeMsec'.");
+        }
+        
         long tmp = (spentTimeMsec / 1000); // 秒
         long spentTimeSeconds = tmp % 60; // 秒
         long spentTimeMinutes = (tmp / 60) % 60; // 分

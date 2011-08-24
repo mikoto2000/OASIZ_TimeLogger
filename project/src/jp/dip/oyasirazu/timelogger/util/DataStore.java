@@ -43,8 +43,8 @@ public interface DataStore {
     public List<Work> getWorkList();
     
     /**
-     * 設定された表示日の名前を取得します。
-     * @return 設定された表示日の名前
+     * 設定された表示日の名前(yyyy/MM/dd の形式になった日付文字列)を取得します。
+     * @return 設定された表示日の名前(yyyy/MM/dd の形式)
      */
     public String getCurrentDateName();
     

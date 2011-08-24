@@ -89,6 +89,14 @@ public class WorkLogDatabase implements DataStore {
      * @param dateFormat
      */
     public WorkLogDatabase(Context context, SimpleDateFormat dateFormat) {
+        if (context == null) {
+            throw new NullPointerException("Not allow null in 'context'");
+        }
+        
+        if (dateFormat == null) {
+            throw new NullPointerException("Not allow null in 'dateFormat'");
+        }
+        
         mDateFormat = dateFormat;
         mDatabaseOpenHelper = new LogDatabaseOpenHelper(context);
         mDatabase = mDatabaseOpenHelper.getWritableDatabase();

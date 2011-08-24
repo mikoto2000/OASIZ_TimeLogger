@@ -78,7 +78,11 @@ public class Work {
         }
         
         if (endDate.before(startDate)) {
-            throw new NullPointerException("Not allow endDate before than startDate.");
+            throw new IllegalArgumentException("Not allow endDate before than startDate.");
+        }
+        
+        if (endDate.equals(startDate)) {
+            throw new IllegalArgumentException("Not allow endDate equals startDate.");
         }
         
         this.mWorkNo = workNo;
@@ -115,11 +119,11 @@ public class Work {
             throw new NullPointerException("Not allow null in 'startDate'.");
         }
         
-        if (mEndDate.before(mStartDate)) {
+        if (mEndDate.before(startDate)) {
             throw new IllegalArgumentException("Not allow endDate before than startDate.");
         }
         
-        if (mEndDate.equals(mStartDate)) {
+        if (mEndDate.equals(startDate)) {
             throw new IllegalArgumentException("Not allow endDate equals startDate.");
         }
         this.mStartDate = startDate;
@@ -134,11 +138,11 @@ public class Work {
             throw new NullPointerException("Not allow null in 'endDate'.");
         }
         
-        if (mEndDate.before(mStartDate)) {
+        if (endDate.before(mStartDate)) {
             throw new IllegalArgumentException("Not allow endDate before than startDate.");
         }
         
-        if (mEndDate.equals(mStartDate)) {
+        if (endDate.equals(mStartDate)) {
             throw new IllegalArgumentException("Not allow endDate equals startDate.");
         }
         

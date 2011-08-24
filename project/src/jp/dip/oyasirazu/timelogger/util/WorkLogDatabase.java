@@ -207,6 +207,7 @@ public class WorkLogDatabase implements DataStore {
     
     /**
      * {@inheritDoc}
+     * work に設定されている workNo は無視され、データベースに追加された順番に、投資番号が付けられます。
      */
     public void add(Work work) {
         ContentValues values = new ContentValues();

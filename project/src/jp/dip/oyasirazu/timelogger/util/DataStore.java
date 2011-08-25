@@ -79,7 +79,8 @@ public interface DataStore {
     public void add(Work work);
     
     /**
-     * データストアに記録されている作業記録情報を更新します。
+     * データストアに記録されている作業記録情報を更新します。<br />
+     * データストアに登録されていない作業記録番号が指定された場合は何もしません。
      * @param beforWorkNo 更新前の作業記録の作業記録番号
      * @param afterWork 更新後の作業記録
      */

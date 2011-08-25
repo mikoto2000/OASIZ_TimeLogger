@@ -101,13 +101,36 @@ public class WorkLogDatabase implements DataStore {
         mDatabaseOpenHelper = new LogDatabaseOpenHelper(context);
         mDatabase = mDatabaseOpenHelper.getWritableDatabase();
         
-        mEarliestDate = getEarliestDate();
-        mLatestDate = getLatestDate();
-        mDisplayDate = mLatestDate;
+        updateState();
         
-        // Date が null ならば、今日の日付を入れる
-        if (mDisplayDate == null) {
-            mDisplayDate = mLatestDate = mEarliestDate = new Date();
+        // データベースにデータがない場合、暫定的に現在日とする
+        if (mLatestDate == null) {
+            mDisplayDate = mEarliestDate = mLatestDate = new Date();
+        } else {
+            mDisplayDate = mLatestDate;
+        }
+    }
+    
+    private void updateState() {
+        mEarliestDate = getEarliestDate();
+        
+        // null ならばデータベースにデータがないので、何もしない。
+        if (mEarliestDate == null) {
+            return;
+        }
+        
+        mLatestDate = getLatestDate();
+        
+        // データベースが空の場合は、暫定的に現在日とする。
+        if (mDisplayDate != null) {
+            // 表示日付がデータベースに記録されている日付の範囲外ならば丸める
+            if (mDisplayDate.after(mLatestDate)) {
+                mDisplayDate = mLatestDate;
+            }
+            
+            if (mDisplayDate.before(mEarliestDate)) {
+                mDisplayDate = mEarliestDate;
+            }
         }
     }
     
@@ -219,18 +242,20 @@ public class WorkLogDatabase implements DataStore {
                 TABLE_NAME,
                 null,
                 values);
+        
+        updateState();
     }
     
     /**
      * {@inheritDoc}
      */
-    public void update(int beforWorkNo, Work afterWork) {
+    public void update(int workNo, Work afterWork) {
         ContentValues values = new ContentValues();
         values.put(WORK_NAME, afterWork.getName());
         values.put(START_DATE, mDateFormat.format(afterWork.getStartDate()));
         values.put(END_DATE, mDateFormat.format(afterWork.getEndDate()));
         
-        String[] whereArgs = {String.valueOf(beforWorkNo)};
+        String[] whereArgs = {String.valueOf(workNo)};
         
         mDatabase.update(
                 TABLE_NAME,
@@ -238,6 +263,8 @@ public class WorkLogDatabase implements DataStore {
                 UPDATE_CLAUSE,
                 whereArgs
                 );
+        
+        updateState();
     }
     
     /**

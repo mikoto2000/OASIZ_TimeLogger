@@ -50,6 +50,11 @@
             android:layout_width="fill_parent"
             android:background="@drawable/start_stop_button">
         </ToggleButton>
-        <Button android:onClick="onDetail" android:layout_height="wrap_content" android:text="@string/detail" android:layout_width="fill_parent"></Button>
+        <Button
+            android:id="@+id/button_detail_view"
+            android:onClick="onDetail"
+            android:layout_height="wrap_content"
+            android:text="@string/detail"
+            android:layout_width="fill_parent"></Button>
     </LinearLayout>
 </LinearLayout>

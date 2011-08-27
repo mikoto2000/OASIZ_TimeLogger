@@ -1,4 +1,4 @@
-package jp.dip.oyasirazu.timelogger.test;
+package jp.dip.oyasirazu.timelogger;
 
 import java.util.Date;
 

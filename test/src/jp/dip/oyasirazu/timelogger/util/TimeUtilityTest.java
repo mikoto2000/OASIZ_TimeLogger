@@ -1,4 +1,4 @@
-package jp.dip.oyasirazu.timelogger.test.util;
+package jp.dip.oyasirazu.timelogger.util;
 
 import jp.dip.oyasirazu.timelogger.util.TimeUtility;
 import junit.framework.TestCase;

@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
+import jp.dip.oyasirazu.timelogger.TestConst;
 import jp.dip.oyasirazu.timelogger.Work;
 import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 
@@ -26,9 +27,9 @@ public class WorkLogDatabaseTest extends AndroidTestCase {
     private SimpleDateFormat mOnlyYmdFormat = new SimpleDateFormat("yyyy/MM/dd"); 
     
     @Override
-    protected void setUp() {
-        File databaseFile = getContext().getDatabasePath(DB_NAME);
-        databaseFile.delete();
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestConst.deleteDatabase(getContext());
     };
     
     /**

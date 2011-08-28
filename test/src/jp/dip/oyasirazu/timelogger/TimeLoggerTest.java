@@ -6,6 +6,7 @@ import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.pm.ActivityInfo;
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -13,17 +14,55 @@ public class TimeLoggerTest extends
         ActivityInstrumentationTestCase2<OASIZ_TimeLogger> {
     
     private static final String PACKAGE_NAME = "jp.dip.oyasirazu.timelogger";
-
+    
     public TimeLoggerTest() {
         super(PACKAGE_NAME, OASIZ_TimeLogger.class);
     }
-
+    
     protected void setUp() throws Exception {
         super.setUp();
+        
+        // データベースファイルを削除
+        TestConst.deleteDatabase(getActivity());
     }
-
+    
     protected void tearDown() throws Exception {
         super.tearDown();
+    }
+    
+    public void testPreConditions() {
+        // setUp で データベースファイルを削除しても、そのテスト中は反映されない？
+        // (deleteDatabaseは実行されるのに、 adapter にはアイテムが入ったままになる、削除タイミングの問題か？
+        //  setUp の時点ではもう Activity もその中のオブジェクトも全部作成・設定済みということか？)
+        // なので、データベースファイルの削除をさせるためだけにこのメソッドを定義。
+        // 要原因究明
+    }
+    
+    public void testShowActivityLand() {
+        testShowActivity(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+    
+    public void testShowActivityPort() {
+        testShowActivity(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+    
+    /**
+     * Record 画面が表示されることを確認します。
+     * @param screenOrientation 画面の向き
+     */
+    private void testShowActivity(int screenOrientation) {
+        // アクティビティの取得
+        final OASIZ_TimeLogger activity = getActivity();
+        
+        // 画面向きの指定
+        activity.setRequestedOrientation(screenOrientation);
+        
+        // View の取得
+        final ListView listView = (ListView) activity.findViewById(R.id.log_view);
+        Adapter adapter = listView.getAdapter();
+        
+        // サイズは 0 のはず
+        assertEquals(0, adapter.getCount());
     }
     
     public void testShowDetailViewLand() {
@@ -34,6 +73,10 @@ public class TimeLoggerTest extends
         testShowDetailView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
     
+    /**
+     * Detail ボタンを押したときに、 DetailViewr が呼び出されることを確認します。
+     * @param screenOrientation 画面の向き
+     */
     private void testShowDetailView(int screenOrientation) {
         final Instrumentation instrumentation = getInstrumentation();
         

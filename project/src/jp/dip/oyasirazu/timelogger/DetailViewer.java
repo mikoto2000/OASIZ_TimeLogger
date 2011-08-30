@@ -259,7 +259,7 @@ public class DetailViewer extends ListActivity {
                 sb.append("\", \"");
                 sb.append(mDateFormat.format(work.getStartDate()));
                 sb.append("\", \"");
-                sb.append(mDateFormat.format(work.getStartDate()));
+                sb.append(mDateFormat.format(work.getEndDate()));
                 sb.append("\"\n");
             }
             

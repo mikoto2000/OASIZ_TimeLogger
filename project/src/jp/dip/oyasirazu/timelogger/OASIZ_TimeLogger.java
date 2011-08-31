@@ -107,6 +107,12 @@ public class OASIZ_TimeLogger extends Activity {
     }
     
     @Override
+    protected void onDestroy() {
+        mDataStore.close();
+        super.onDestroy();
+    }
+    
+    @Override
     protected void onResume() {
         super.onResume();
         mLogAdapter.clear();
@@ -114,8 +120,6 @@ public class OASIZ_TimeLogger extends Activity {
         for (Work work : mDataStore.getWorkList()) {
             mLogAdapter.add(work);
         }
-        
-        
     };
     
     /**

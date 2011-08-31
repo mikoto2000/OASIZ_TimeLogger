@@ -85,4 +85,6 @@ public interface DataStore {
      * @param afterWork 更新後の作業記録
      */
     public void update(int beforWorkNo, Work afterWork);
+
+    public void close();
 }

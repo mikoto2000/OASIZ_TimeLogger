@@ -156,6 +156,7 @@ public class WorkLogDatabase implements DataStore {
         
         List<Work> workList = new ArrayList<Work>();
         if (cursor.getCount() == 0) {
+            cursor.close();
             return workList;
         }
         
@@ -173,6 +174,8 @@ public class WorkLogDatabase implements DataStore {
                 // パースに失敗したレコードは無視する。(削除したほうがよいか？)
             }
         } while (cursor.moveToNext());
+        
+        cursor.close();
         
         return workList;
     }
@@ -305,12 +308,15 @@ public class WorkLogDatabase implements DataStore {
                 "1");
         
         if (cursor.getCount() == 0) {
+            cursor.close();
             return null;
         }
         
         // 作業開始時間を取得
         cursor.moveToFirst();
         estDay = cursor.getString(START_DATE_COLUMN);
+        
+        cursor.close();
         
         try {
             return mOnlyYmdFormat.parse(estDay);
@@ -397,6 +403,7 @@ public class WorkLogDatabase implements DataStore {
             
             List<Work> workList = new ArrayList<Work>();
             if (cursor.getCount() == 0) {
+                cursor.close();
                 return workList;
             }
             
@@ -414,7 +421,13 @@ public class WorkLogDatabase implements DataStore {
                 }
             } while (cursor.moveToNext());
             
+            cursor.close();
+            
             return workList;
         }
+    }
+
+    public void close() {
+        mDatabase.close();
     }
 }

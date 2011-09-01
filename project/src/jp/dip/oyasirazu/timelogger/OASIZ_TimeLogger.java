@@ -43,11 +43,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * 時間を記録するアクティビティ
@@ -95,6 +97,7 @@ public class OASIZ_TimeLogger extends Activity {
         
         mLogView.setAdapter(mLogAdapter);
         mLogView.setDividerHeight(0);
+        mLogView.setOnItemClickListener(new OnWorkListItemClickListener());
         
         // 壁紙の設定
         WindowManager windowmanager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -229,6 +232,22 @@ public class OASIZ_TimeLogger extends Activity {
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
                 }
             }
+        }
+    }
+    
+    /**
+     * 作業履歴リストをタップされた時に呼び出されるリスナ、<br />
+     * タップされたアイテムの作業名を EditText に設定する。
+     * @author mikoto
+     *
+     */
+    private class OnWorkListItemClickListener implements OnItemClickListener {
+        /**
+         * タップされたアイテムの作業名を EditText に設定する。
+         */
+        public void onItemClick(AdapterView<?> parent, View item, int position, long id) {
+            Work work = mLogAdapter.getItem(position);
+            mWorkName.setText(work.getName());
         }
     }
 }

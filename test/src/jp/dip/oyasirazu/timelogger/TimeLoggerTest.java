@@ -9,7 +9,9 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -33,6 +35,12 @@ public class TimeLoggerTest extends
     protected void setUp() throws Exception {
         super.setUp();
         if (getName().equals("testFirstDisplayWork")) {
+            WorkLogDatabase wld = new WorkLogDatabase(getInstrumentation().getTargetContext(), new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"));
+            wld.add(new Work(TEST_WORK_NAME1, new Date(START_TIME), new Date(END_TIME)));
+            wld.add(new Work(TEST_WORK_NAME2, new Date(START_TIME + 1), new Date(END_TIME + 1)));
+            wld.add(new Work(TEST_WORK_NAME3, new Date(START_TIME + 2), new Date(END_TIME + 2)));
+            wld.close();
+        } else if (getName().equals("testLogTouch")) {
             WorkLogDatabase wld = new WorkLogDatabase(getInstrumentation().getTargetContext(), new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"));
             wld.add(new Work(TEST_WORK_NAME1, new Date(START_TIME), new Date(END_TIME)));
             wld.add(new Work(TEST_WORK_NAME2, new Date(START_TIME + 1), new Date(END_TIME + 1)));
@@ -223,5 +231,61 @@ public class TimeLoggerTest extends
         if (callee != null) {
             callee.finish();
         }
+    }
+    
+    /**
+     * 作業履歴のリストをタッチしたときに、タッチされたアイテムの作業名が EditText に設定されることを確認します。
+     */
+    public void testLogTouch() {
+        Instrumentation instrumentation = getInstrumentation();
+        
+        // アクティビティの取得
+        final OASIZ_TimeLogger activity = getActivity();
+        
+        // ListView の取得と内容確認
+        final ListView listView = (ListView) activity.findViewById(R.id.log_view);
+        
+        // 今回取得するアダプタは ArrayAdapter<Work> のはず
+        @SuppressWarnings("unchecked")
+        final ArrayAdapter<Work> adapter = (ArrayAdapter<Work>)listView.getAdapter();
+        
+        // 0 番目のアイテムをクリック
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                listView.performItemClick((View)listView.getParent(), 0, 0);
+            }
+        });
+        
+        // UI スレッドと同期
+        instrumentation.waitForIdleSync();
+        
+        // EditText の取得
+        final EditText editText = (EditText) activity.findViewById(R.id.work_name);
+        
+        assertEquals(editText.getText().toString(), adapter.getItem(0).getName());
+        
+        // 1 番目のアイテムをクリック
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                listView.performItemClick((View)listView.getParent(), 1, 1);
+            }
+        });
+        
+        // UI スレッドと同期
+        instrumentation.waitForIdleSync();
+        
+        assertEquals(editText.getText().toString(), adapter.getItem(1).getName());
+        
+        // 2 番目のアイテムをクリック
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                listView.performItemClick((View)listView.getParent(), 2, 2);
+            }
+        });
+        
+        // UI スレッドと同期
+        instrumentation.waitForIdleSync();
+        
+        assertEquals(editText.getText().toString(), adapter.getItem(2).getName());
     }
 }

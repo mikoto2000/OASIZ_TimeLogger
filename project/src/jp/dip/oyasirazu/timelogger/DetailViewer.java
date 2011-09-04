@@ -49,6 +49,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;
@@ -69,6 +70,7 @@ public class DetailViewer extends ListActivity {
     private SimpleDateFormat mDateFormat;
     
     private WorkListAdapter mLogAdapter;
+    private TextView mNoLogData;
     
     private Button mNextButton;
     private Button mPrevButton;
@@ -84,6 +86,8 @@ public class DetailViewer extends ListActivity {
         mNextButton = (Button) findViewById(R.id.next);
         mPrevButton = (Button) findViewById(R.id.prev);
         
+        mNoLogData = (TextView) findViewById(android.R.id.empty);
+        
         updateButtonsStatus();
         
         // リストの設定
@@ -95,7 +99,7 @@ public class DetailViewer extends ListActivity {
                 );
         
         int textColor = Settings.getTextColor(this, DEFAULT_TEXT_COLOR);
-        mLogAdapter.setTextColor(textColor);
+        setTextColor(textColor);
         
         setListAdapter(mLogAdapter);
         
@@ -223,6 +227,11 @@ public class DetailViewer extends ListActivity {
         }
     }
     
+    private void setTextColor(int textColor) {
+        mLogAdapter.setTextColor(textColor);
+        mNoLogData.setTextColor(textColor);
+    }
+    
     //////////////
     // メニュー設定
     
@@ -307,8 +316,8 @@ public class DetailViewer extends ListActivity {
                 if (data.hasExtra("SelectedColor")) {
                     int textColor = data.getIntExtra("SelectedColor", DEFAULT_TEXT_COLOR);
                     Settings.saveTextColor(this, textColor);
-                    mLogAdapter.setTextColor(textColor);
-                    }
+                    setTextColor(textColor);
+                }
             }
         }
     }

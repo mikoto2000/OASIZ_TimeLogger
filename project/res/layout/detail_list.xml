@@ -18,6 +18,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/android:empty"
         android:text="@string/no_log_data"
+        android:shadowColor="#000000"
+        android:shadowRadius="1"
         android:layout_weight="1"/>
     <LinearLayout
         android:orientation="horizontal"

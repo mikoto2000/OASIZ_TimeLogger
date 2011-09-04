@@ -238,17 +238,22 @@ public class WorkLogDatabase implements DataStore {
      * work に設定されている workNo は無視され、データベースに追加された順番に、投資番号が付けられます。
      */
     public void add(Work work) {
-        ContentValues values = new ContentValues();
-        values.put(WORK_NAME, work.getName());
-        values.put(START_DATE, mDateFormat.format(work.getStartDate()));
-        values.put(END_DATE, mDateFormat.format(work.getEndDate()));
+        String startDateString = mDateFormat.format(work.getStartDate());
+        String endDateString = mDateFormat.format(work.getEndDate());
         
-        mDatabase.insert(
-                TABLE_NAME,
-                null,
-                values);
-        
-        updateState();
+        if (!startDateString.equals(endDateString)) {
+            ContentValues values = new ContentValues();
+            values.put(WORK_NAME, work.getName());
+            values.put(START_DATE, startDateString);
+            values.put(END_DATE, endDateString);
+            
+            mDatabase.insert(
+                    TABLE_NAME,
+                    null,
+                    values);
+            
+            updateState();
+        }
     }
     
     /**

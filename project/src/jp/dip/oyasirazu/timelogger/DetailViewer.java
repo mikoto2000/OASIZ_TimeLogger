@@ -26,7 +26,6 @@
 
 package jp.dip.oyasirazu.timelogger;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -52,9 +51,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;
-import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_COLOR;
-
 /**
  * 作業記録の詳細を見るためのアクティビティ
  * @author mikoto
@@ -63,8 +59,6 @@ import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_COLO
 public class DetailViewer extends ListActivity {
     
     private static final int DEFAULT_TEXT_COLOR = Color.WHITE;
-    
-    private Wallpaper mWallpaper;
     
     private DataStore mDataStore;
     private SimpleDateFormat mDateFormat;
@@ -114,8 +108,9 @@ public class DetailViewer extends ListActivity {
         int width = display.getWidth();
         int height = display.getHeight();
         
+        // 壁紙を rootView に設定
         View rootView = (View)findViewById(R.id.root);
-        mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
+        new Wallpaper(rootView, getFilesDir(), width, height);
     }
     
     ////////////
@@ -248,15 +243,6 @@ public class DetailViewer extends ListActivity {
             case R.id.detail_view_send:
                 sendLog();
                 break;
-            case R.id.menu_wallpaper:
-                // ギャラリーから画像を選択し、バックグラウンドに設定する。
-                mWallpaper.openWallpaperDialog(this, REQUEST_CODE_GET_CONTENT);
-                break;
-            case R.id.menu_text_color:
-                Intent intent = new Intent(this, org.superdry.util.colorpicker.lib.SuperdryColorPicker.class);
-                intent.putExtra("SelectedColor", DEFAULT_TEXT_COLOR);
-                startActivityForResult(intent, REQUEST_CODE_GET_COLOR);
-                break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
         }
@@ -295,30 +281,6 @@ public class DetailViewer extends ListActivity {
             Toast.makeText(this,
                     getResources().getString(R.string.no_log_data),
                     Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_GET_CONTENT) {
-            if (resultCode == RESULT_OK) {
-                try {
-                    // 受け取った Bitmap を壁紙に設定する
-                    mWallpaper.setWallpaper(getContentResolver(), data.getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
-                }
-            }
-        } else if (requestCode == REQUEST_CODE_GET_COLOR) {
-            if (resultCode == RESULT_OK) {
-                if (data.hasExtra("SelectedColor")) {
-                    int textColor = data.getIntExtra("SelectedColor", DEFAULT_TEXT_COLOR);
-                    Settings.saveTextColor(this, textColor);
-                    setTextColor(textColor);
-                }
-            }
         }
     }
 }

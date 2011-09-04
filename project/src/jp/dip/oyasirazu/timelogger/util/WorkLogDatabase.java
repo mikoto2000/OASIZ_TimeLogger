@@ -170,6 +170,8 @@ public class WorkLogDatabase implements DataStore {
                         mDateFormat.parse(cursor.getString(END_DATE_COLUMN))
                         );
                 workList.add(work);
+            } catch (IllegalArgumentException e) {
+                // 無効なデータは無視する。(削除したほうがよいか？)
             } catch (ParseException e) {
                 // パースに失敗したレコードは無視する。(削除したほうがよいか？)
             }

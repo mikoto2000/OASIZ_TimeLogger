@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import jp.dip.oyasirazu.timelogger.util.DataStore;
+import jp.dip.oyasirazu.timelogger.util.Settings;
 import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 
 import android.app.AlertDialog;
@@ -45,13 +46,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONTENT;
+import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_COLOR;
 
 /**
  * 作業記録の詳細を見るためのアクティビティ
@@ -60,12 +61,14 @@ import static jp.dip.oyasirazu.timelogger.OASIZ_TimeLogger.REQUEST_CODE_GET_CONT
  */
 public class DetailViewer extends ListActivity {
     
+    private static final int DEFAULT_TEXT_COLOR = Color.WHITE;
+    
     private Wallpaper mWallpaper;
     
     private DataStore mDataStore;
     private SimpleDateFormat mDateFormat;
     
-    private ArrayAdapter<Work> mLogAdapter;
+    private WorkListAdapter mLogAdapter;
     
     private Button mNextButton;
     private Button mPrevButton;
@@ -87,9 +90,12 @@ public class DetailViewer extends ListActivity {
         String logFormatString = getResources().getString(R.string.log_list_string);
         mLogAdapter = new WorkListAdapter(
                 this,
-                android.R.layout.simple_list_item_1,
+                R.layout.list_column,
                 logFormatString
                 );
+        
+        int textColor = Settings.getTextColor(this, DEFAULT_TEXT_COLOR);
+        mLogAdapter.setTextColor(textColor);
         
         setListAdapter(mLogAdapter);
         
@@ -127,6 +133,7 @@ public class DetailViewer extends ListActivity {
         
         final EditText editText = new EditText(this);
         editText.setText(beforWork.getName());
+        editText.setSingleLine(true);
         
         // 表示項目とリスナの設定
         dialogBuilder.setTitle(R.string.edit_work_name);
@@ -236,6 +243,11 @@ public class DetailViewer extends ListActivity {
                 // ギャラリーから画像を選択し、バックグラウンドに設定する。
                 mWallpaper.openWallpaperDialog(this, REQUEST_CODE_GET_CONTENT);
                 break;
+            case R.id.menu_text_color:
+                Intent intent = new Intent(this, org.superdry.util.colorpicker.lib.SuperdryColorPicker.class);
+                intent.putExtra("SelectedColor", DEFAULT_TEXT_COLOR);
+                startActivityForResult(intent, REQUEST_CODE_GET_COLOR);
+                break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
         }
@@ -289,6 +301,14 @@ public class DetailViewer extends ListActivity {
                     e.printStackTrace();
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
                 }
+            }
+        } else if (requestCode == REQUEST_CODE_GET_COLOR) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("SelectedColor")) {
+                    int textColor = data.getIntExtra("SelectedColor", DEFAULT_TEXT_COLOR);
+                    Settings.saveTextColor(this, textColor);
+                    mLogAdapter.setTextColor(textColor);
+                    }
             }
         }
     }

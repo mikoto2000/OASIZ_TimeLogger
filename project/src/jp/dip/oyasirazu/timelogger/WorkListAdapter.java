@@ -29,6 +29,7 @@ package jp.dip.oyasirazu.timelogger;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,7 @@ import android.widget.TextView;
  */
 public class WorkListAdapter extends ArrayAdapter<Work> {
     private String mLogFormatString;
+    private int mTextColor;
 
     /**
      *  コンストラクタ
@@ -66,6 +68,7 @@ public class WorkListAdapter extends ArrayAdapter<Work> {
     
     private void init(String logFormatString) {
         mLogFormatString = logFormatString;
+        mTextColor = Color.WHITE;
     }
     
     @Override
@@ -82,6 +85,17 @@ public class WorkListAdapter extends ArrayAdapter<Work> {
                         work.getEndDate(),
                         work.getSpentTime() / 60000)); // 分表示にする
         
+        view.setTextColor(mTextColor);
+        
         return view;
+    }
+
+    /**
+     * リストの文字色を設定します。
+     * @param textColor リストの文字色
+     */
+    public void setTextColor(int textColor) {
+        mTextColor = textColor;
+        this.notifyDataSetInvalidated();
     }
 }

@@ -3,7 +3,7 @@
     <string name="app_name">OASIZ_TimeLogger</string>
     
     <string name="work_name">Work Name</string>
-    <string name="time_pattern">"%1$02d:%2$02d:%3$02d"</string>
+    <string name="time_pattern">"Spent Time : %1$02d:%2$02d:%3$02d"</string>
     
     <string name="start_record">Start Rec</string>
     <string name="stop_record">Stop Rec</string>
@@ -15,10 +15,12 @@
     <string name="next">next</string>
     <string name="prev">prev</string>
     
+    <!-- menu message -->
     <string name="menu_wallpaper">WallPaper</string>
     <string name="menu_send">Send</string>
+    <string name="menu_text_color">Text Color</string>
+    <string name="menu_info">Licenses</string>
     
-    <!-- menu message -->
     <string name="choose_send_activity">Choose send activity</string>
     
     <string name="wallpaper">Wallpaper</string>

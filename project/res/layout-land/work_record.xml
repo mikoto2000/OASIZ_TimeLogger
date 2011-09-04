@@ -19,11 +19,17 @@
         <DigitalClock
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
-            android:textSize="16sp"/>
+            android:id="@+id/time_view"
+            android:textSize="16sp"
+            android:textColor="@color/default_text_color"
+            android:shadowColor="#000000"
+            android:shadowRadius="1"/>
         <jp.dip.oyasirazu.timelogger.view.TimerView
             android:textSize="16sp"
-            android:textColor="#FF0000"
             android:id="@+id/timer_view"
+            android:textColor="@color/default_text_color"
+            android:shadowColor="#000000"
+            android:shadowRadius="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

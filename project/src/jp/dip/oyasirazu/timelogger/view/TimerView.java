@@ -71,6 +71,7 @@ public class TimerView extends TextView {
     private void init(Context context) {
         mHandler = new Handler();
         mTimer = new Timer();
+        setText("00:00:00");
     }
     
     /**

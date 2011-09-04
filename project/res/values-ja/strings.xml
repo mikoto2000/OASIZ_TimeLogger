@@ -15,10 +15,12 @@
     <string name="next">次へ</string>
     <string name="prev">前へ</string>
     
+    <!-- メニューメッセージ -->
     <string name="menu_wallpaper">壁紙</string>
     <string name="menu_send">送信</string>
+    <string name="menu_text_color">文字色</string>
+    <string name="menu_info">ライセンス情報</string>
     
-    <!-- メニューメッセージ -->
     <string name="choose_send_activity">送信するアクティビティを選択</string>
     
     <string name="wallpaper">壁紙</string>

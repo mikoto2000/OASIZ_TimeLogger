@@ -31,11 +31,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jp.dip.oyasirazu.timelogger.util.DataStore;
+import jp.dip.oyasirazu.timelogger.util.Settings;
 import jp.dip.oyasirazu.timelogger.util.WorkLogDatabase;
 import jp.dip.oyasirazu.timelogger.view.TimerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Menu;
@@ -44,7 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -61,13 +63,17 @@ public class OASIZ_TimeLogger extends Activity {
     private static final String WORK_NAME = "WORK_NAME"; 
     private static final String START_TIME = "START_TIME"; 
     
+    private static final int DEFAULT_TEXT_COLOR = Color.WHITE; 
+    private static final String SELECTED_COLOR = "SelectedColor"; 
+    
     private Wallpaper mWallpaper;
     
     private Resources mResources;
     private TimerView mTimerView;
+    private DigitalClock mDigitalClock;
     private EditText mWorkName;
     private ListView mLogView;
-    private ArrayAdapter<Work> mLogAdapter;
+    private WorkListAdapter mLogAdapter;
     
     private DataStore mDataStore;
     private Date mStartDate;
@@ -86,6 +92,8 @@ public class OASIZ_TimeLogger extends Activity {
         mDataStore = new WorkLogDatabase(this, mDateFormat);
         
         mTimerView = (TimerView)findViewById(R.id.timer_view);
+        
+        mDigitalClock = (DigitalClock)findViewById(R.id.time_view);
         
         mWorkName = (EditText)findViewById(R.id.work_name);
         
@@ -107,22 +115,30 @@ public class OASIZ_TimeLogger extends Activity {
         
         View rootView = (View)findViewById(R.id.root);
         mWallpaper = new Wallpaper(rootView, getFilesDir(), width, height);
+        
+        int textColor = Settings.getTextColor(this, DEFAULT_TEXT_COLOR);
+        setTextColor(textColor);
     }
     
     @Override
     protected void onDestroy() {
         mDataStore.close();
+        
         super.onDestroy();
     }
     
     @Override
     protected void onResume() {
         super.onResume();
+        
         mLogAdapter.clear();
         
         for (Work work : mDataStore.getWorkList()) {
             mLogAdapter.add(work);
         }
+        
+        int textColor = Settings.getTextColor(this, DEFAULT_TEXT_COLOR);
+        setTextColor(textColor);
     };
     
     /**
@@ -198,6 +214,7 @@ public class OASIZ_TimeLogger extends Activity {
     //////////////
     // メニュー設定
     static final int REQUEST_CODE_GET_CONTENT = 1;
+    static final int REQUEST_CODE_GET_COLOR = 2;
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -213,6 +230,14 @@ public class OASIZ_TimeLogger extends Activity {
                 // 壁紙設定ダイアログを開く
                 mWallpaper.openWallpaperDialog(this, REQUEST_CODE_GET_CONTENT);
             break;
+            case R.id.menu_text_color:
+                Intent intent = new Intent(this, org.superdry.util.colorpicker.lib.SuperdryColorPicker.class);
+                intent.putExtra(SELECTED_COLOR, DEFAULT_TEXT_COLOR);
+                startActivityForResult(intent, REQUEST_CODE_GET_COLOR);
+                break;
+            case R.id.menu_info:
+                Settings.showLicenses(this);
+                break;
             default:
                 throw new IllegalArgumentException("unknown menu id.");
         }
@@ -232,7 +257,27 @@ public class OASIZ_TimeLogger extends Activity {
                     Toast.makeText(this, R.string.image_io_error, Toast.LENGTH_LONG);
                 }
             }
+        } else if (requestCode == REQUEST_CODE_GET_COLOR) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra(SELECTED_COLOR)) {
+                    int textColor = data.getIntExtra(SELECTED_COLOR, DEFAULT_TEXT_COLOR);
+                    
+                    Settings.saveTextColor(this, textColor);
+                    
+                    setTextColor(textColor);
+                }
+            }
         }
+    }
+    
+    /**
+     * このアクティビティの文字色を設定します。
+     * @param textColor 文字色
+     */
+    private void setTextColor(int textColor) {
+        mTimerView.setTextColor(textColor);
+        mDigitalClock.setTextColor(textColor);
+        mLogAdapter.setTextColor(textColor);
     }
     
     /**

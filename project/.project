@@ -30,4 +30,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>SuperdryColorPickerLib-g_src</name>
+			<type>2</type>
+			<locationURI>_android_SuperdryColorPickerLib_g_d79dc05e/src</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

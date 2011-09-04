@@ -2,4 +2,6 @@
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_wallpaper" android:title="@string/menu_wallpaper" android:icon="@android:drawable/ic_menu_gallery"></item>
+    <item android:id="@+id/menu_text_color" android:title="@string/menu_text_color" android:icon="@android:drawable/ic_menu_set_as"></item>
+    <item android:id="@+id/menu_info" android:title="@string/menu_info" android:icon="@android:drawable/ic_menu_info_details"></item>
 </menu>

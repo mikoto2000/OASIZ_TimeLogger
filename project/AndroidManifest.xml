@@ -14,5 +14,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailViewer" android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity android:name="org.superdry.util.colorpicker.lib.SuperdryColorPicker"
+                android:theme="@android:style/Theme.Dialog" />
     </application>
 </manifest>

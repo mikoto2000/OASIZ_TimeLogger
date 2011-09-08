@@ -55,6 +55,7 @@ https://github.com/mikoto2000/OASIZ_TimeLogger
 2011/08/21 Version 0.5
 2011/08/23 Version 0.525
 2011/08/31 Version 0.550
+2011/09/09 Version 1.0
 
 
 ■ TODO
@@ -62,6 +63,4 @@ https://github.com/mikoto2000/OASIZ_TimeLogger
 ・縦画面と横画面で別々の背景画像が指定できるとよいね。
 ・説明書的なものが必要か？
   (画面オーバレイで出てくるヘルプとか理想)
-・テーマ指定(最低でも文字色くらいは...)
-・入力補助機能が欲しい
 ・メモ書きくらいできるようにしたほうが良い？

@@ -232,7 +232,8 @@ public class OASIZ_TimeLogger extends Activity {
             break;
             case R.id.menu_text_color:
                 Intent intent = new Intent(this, org.superdry.util.colorpicker.lib.SuperdryColorPicker.class);
-                intent.putExtra(SELECTED_COLOR, DEFAULT_TEXT_COLOR);
+                int currentTextColor = Settings.getTextColor(this, DEFAULT_TEXT_COLOR);
+                intent.putExtra(SELECTED_COLOR, currentTextColor);
                 startActivityForResult(intent, REQUEST_CODE_GET_COLOR);
                 break;
             case R.id.menu_info:

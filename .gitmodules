@@ -1,0 +1,3 @@
+[submodule "project/libraries/SuperdryColorPickerLib"]
+	path = project/libraries/SuperdryColorPickerLib
+	url = https://github.com/mikoto2000/SuperdryColorPickerLib.git

@@ -1,5 +1,0 @@
-OASIZ_TimeLogger は、このアプリケーション用にカスタマイズした SuperdryColorPickerLib を使っています。
-
-このディレクトリで下記コマンドを打ち、 SuperdryColorPickerLib(OASIZ 用改造版) を入手してください。
-
-git clone git://github.com/mikoto2000/SuperdryColorPickerLib.git
